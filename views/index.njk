@@ -4,7 +4,40 @@
   {{ title }}
 {% endblock %}
 
+{% block head %}
+  <style>
+    .hero__title {
+      font-size: 34px;
+      font-weight: 700;
+    }
+    .hero__message {
+      font-size: 26px;
+      font-weight: 500;
+    }
+    .message__text {
+      font-size: 22px;
+      font-weight: 400;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
-  <h1>{{ title }}</h1>
-  <p>Welcome to {{ title }}</p>
+  <main>
+    <div class="hero">
+      <h1 class="hero__title">{{ title }}</h1>
+      <p class="hero__message">This is {{ title }} and you're free to write anything you want.</p>
+    </div>
+
+    <section>
+      {% for message in messages %}
+        <div>
+          <p class="message__text">
+            {{ message.text }}
+          </p>
+          <pre>By: {{ message.user }}</pre>
+          <pre>Posted: {{ message.added.toLocaleTimeString() }}</pre>
+        </div>
+      {% endfor %}
+    </section>
+  </main>
 {% endblock %}
