@@ -14,6 +14,15 @@
       font-size: 26px;
       font-weight: 500;
     }
+    .feed__header {
+      display: flex;
+      flex-direction: row;
+      margin-bottom: 2rem;
+    }
+    .feed__header h2 {
+      font-weight: 500;
+      margin-right: 3rem;
+    }
     .message__text {
       font-size: 22px;
       font-weight: 400;
@@ -22,22 +31,29 @@
 {% endblock %}
 
 {% block content %}
-  <main>
+  <main class="container">
     <div class="hero">
       <h1 class="hero__title">{{ title }}</h1>
       <p class="hero__message">This is {{ title }} and you're free to write anything you want.</p>
     </div>
 
-    <section>
-      {% for message in messages %}
-        <div>
-          <p class="message__text">
-            {{ message.text }}
-          </p>
-          <pre>By: {{ message.user }}</pre>
-          <pre>Posted: {{ message.added.toLocaleTimeString() }}</pre>
-        </div>
-      {% endfor %}
+    <section class="container feed">
+      <div class="feed__header">
+        <h2>Feed</h2>
+        <a href="/new" role="button" aria-disabled="true" class="btn btn-primary">Post</a>
+      </div>
+
+      <div class="messages">
+        {% for message in messages %}
+          <div class="message">
+            <p class="message__text">
+              {{ message.text }}
+            </p>
+            <pre>By: {{ message.user }}</pre>
+            <pre>Posted: {{ message.added.toLocaleTimeString() }}</pre>
+          </div>
+        {% endfor %}
+      </div>
     </section>
   </main>
 {% endblock %}

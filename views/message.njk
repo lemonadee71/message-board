@@ -1,0 +1,36 @@
+{% extends "layout.njk" %}
+
+{% block title %}New Message{% endblock %}
+
+{% block head %}
+  <style>
+    .form {
+      max-width: 576px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <main class="container">
+    <a href="/" role="button" aria-disabled="true" class="btn btn-secondary">Go back</a>
+
+    <br><br>
+
+    <h1>Post a new message</h1>
+    <form class="form" action="/new" method="POST">
+      <div class="mb-3">
+        <label for="username" class="form-label">Username<span style="color: red;">*</span>
+        </label>
+        <input type="text" class="form-control" id="username">
+      </div>
+
+      <div class="mb-3">
+        <label for="message" class="form-label">Message</label>
+        <textarea class="form-control" id="message" rows="3" required></textarea>
+      </div>
+
+      <button class="btn btn-primary" type="submit">Submit</button>
+      <button class="btn btn-danger" type="reset">Clear</button>
+    </form>
+  </main>
+{% endblock %}
