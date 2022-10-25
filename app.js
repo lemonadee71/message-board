@@ -1,14 +1,26 @@
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const nunjucks = require('nunjucks');
+const mongoose = require('mongoose');
 
 const indexRouter = require('./routes/index');
 const newMessageRouter = require('./routes/new');
 
 const app = express();
+
+// Set up mongoose connection
+const mongoDB = process.env.MONGODB_URI;
+mongoose.connect(mongoDB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+mongoose.Promise = global.Promise;
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // view engine setup
 app.set('view engine', 'njk');
