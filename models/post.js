@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 const PostSchema = new Schema({
   author: { type: ObjectId, ref: 'User', required: true },
   board: { type: ObjectId, ref: 'Board', required: true },
+  subject: { type: String, required: true, maxLength: 150 },
   body: { type: String, required: true, trim: true },
   // the board needs private set to false to toggle this
   // only creator and moderators can toggle it freely

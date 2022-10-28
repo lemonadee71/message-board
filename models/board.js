@@ -8,7 +8,6 @@ const BoardSchema = new Schema({
   display_name: {
     type: String,
     maxLength: 50,
-    trim: true,
     default: function () {
       return this.name;
     },

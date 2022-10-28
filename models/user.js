@@ -15,12 +15,11 @@ const UserSchema = new Schema({
   display_name: {
     type: String,
     maxLength: 30,
-    trim: true,
     default: function () {
       return this.username;
     },
   },
-  bio: { type: String, maxLength: 200, trim: true },
+  bio: { type: String, maxLength: 200 },
   boards: [{ type: ObjectId, ref: 'Board' }],
   date_created: Timestamp,
 });
