@@ -3,9 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "start:dev": "nodemon ./bin/www",
-    "start:server": "DEBUG=message-board:* npm run start:dev",
+    "start": "NODE_ENV=production node ./bin/www",
+    "start:dev": "NODE_ENV=development nodemon ./bin/www",
     "lint": "eslint . --ext .js --ignore-pattern node_modules/"
   },
   "dependencies": {
@@ -21,6 +20,7 @@
     "express": "~4.16.1",
     "express-validator": "^6.14.2",
     "http-errors": "~1.6.3",
+    "mongodb-memory-server": "^8.9.3",
     "mongoose": "^6.7.0",
     "morgan": "~1.9.1",
     "nunjucks": "^3.2.3",
@@ -31,7 +31,6 @@
   },
   "devDependencies": {
     "jest": "^29.2.2",
-    "mongodb-memory-server": "^8.9.3",
     "supertest": "^6.3.1"
   }
 }
