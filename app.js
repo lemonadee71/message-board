@@ -6,10 +6,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const nunjucks = require('nunjucks');
 
-const indexRouter = require('./routes/index');
-const newMessageRouter = require('./routes/new');
 const { setupDatabase } = require('./db');
-
 const app = express();
 
 setupDatabase();
@@ -28,9 +25,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(require('./middlewares/session'));
+app.use(require('./middlewares/passport'));
 
-app.use('/', indexRouter);
-app.use('/new', newMessageRouter);
+app.use('/', require('./routes/index'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
