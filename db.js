@@ -33,4 +33,6 @@ exports.setupDatabase = async function () {
   db.once('open', () => {
     console.log(`MongoDB successfully connected to ${uri}`);
   });
+
+  return db;
 };
