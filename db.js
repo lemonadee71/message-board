@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-exports.setupDatabase = async function () {
+exports.connectDB = async function () {
   mongoose.Promise = global.Promise;
 
   let uri;

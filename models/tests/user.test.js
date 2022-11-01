@@ -1,10 +1,9 @@
-const { default: mongoose } = require('mongoose');
-const { setupDatabase } = require('../../db');
+const { connectDB } = require('../../db');
 const User = require('../user');
 
 let db;
 beforeAll(async () => {
-  db = await setupDatabase();
+  db = await connectDB();
 });
 
 afterAll((done) => {

@@ -6,10 +6,10 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const nunjucks = require('nunjucks');
 
-const { setupDatabase } = require('./db');
+const { connectDB } = require('./db');
 const app = express();
 
-setupDatabase();
+connectDB();
 
 // view engine setup
 app.set('view engine', 'njk');
