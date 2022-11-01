@@ -29,6 +29,8 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.5.3",
+    "@tailwindcss/typography": "^0.5.7",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.25.0",
     "eslint-config-airbnb-base": "^15.0.0",
