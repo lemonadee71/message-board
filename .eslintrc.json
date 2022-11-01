@@ -32,5 +32,13 @@
       "error",
       { "AssignmentExpression": { "array": false } }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.js"],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
 }
