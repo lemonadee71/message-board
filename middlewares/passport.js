@@ -1,42 +1,31 @@
 const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
 
 passport.use(
-  new LocalStrategy((username, password, done) => {
-    User.findOne({ username: username }, (err, user) => {
-      if (err) {
-        return done(err);
-      }
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      const user = await User.findById(username).orFail(
+        new Error('User not found!')
+      );
+      const isMatch = await user.comparePassword(password);
 
-      if (!user) {
-        return done(null, false, {
-          message: `No accout with username: ${username}`,
-        });
-      }
-
-      bcrypt.compare(password, user.password, (e, res) => {
-        if (e) return done(e);
-
-        // passwords match! log user in
-        if (res) return done(null, user);
-
-        // passwords do not match!
-        return done(null, false, { message: 'Incorrect password' });
-      });
-    });
+      if (isMatch) done(null, user);
+      else done(null, false, { message: 'Incorrect pasword' });
+    } catch (error) {
+      done(error);
+    }
   })
 );
 
 passport.serializeUser(function (user, done) {
-  done(null, user._id);
+  done(null, user.username);
 });
 
-passport.deserializeUser(function (id, done) {
-  User.findById(id, done);
+passport.deserializeUser(function (username, done) {
+  User.findById(username, done);
 });
 
 module.exports = [
@@ -44,7 +33,9 @@ module.exports = [
   passport.session(),
   // make user accessible to views
   (req, res, next) => {
-    res.locals.currentUser = req.user;
+    const user = { ...req.user };
+    delete user.password;
+    res.locals.currentUser = user;
     next();
   },
 ];

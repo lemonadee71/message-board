@@ -1,16 +1,14 @@
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
-const { Timestamp, ObjectId } = require('./utils');
+const { Timestamp } = require('./utils');
 
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  // email: { type: String, unique: true },
-  username: {
+  _id: {
     type: String,
-    lowercase: true,
     maxLength: 30,
-    required: true,
-    unique: true,
+    alias: 'username',
   },
   password: { type: String, required: true },
   display_name: {
@@ -21,12 +19,20 @@ const UserSchema = new Schema({
     },
   },
   bio: { type: String, maxLength: 200 },
-  boards: [{ type: ObjectId, ref: 'Board' }],
+  boards: [{ type: String, ref: 'Board' }],
   date_created: Timestamp,
+});
+
+UserSchema.pre('save', async function () {
+  this.password = await bcrypt.hash(this.password, 10);
 });
 
 UserSchema.virtual('url').get(function () {
   return `/u/${this.username}`;
 });
+
+UserSchema.methods.comparePassword = function (input) {
+  return bcrypt.compare(input, this.password);
+};
 
 module.exports = mongoose.model('User', UserSchema);
