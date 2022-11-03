@@ -25,7 +25,15 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(function (username, done) {
-  User.findById(username, done);
+  User.findById(username, (err, user) => {
+    if (err) {
+      done(err);
+    } else {
+      const o = user.toObject({ virtuals: true });
+      delete o.password;
+      done(null, o);
+    }
+  });
 });
 
 module.exports = [
@@ -33,9 +41,7 @@ module.exports = [
   passport.session(),
   // make user accessible to views
   (req, res, next) => {
-    const user = { ...req.user };
-    delete user.password;
-    res.locals.currentUser = user;
+    res.locals.currentUser = req.user;
     next();
   },
 ];
