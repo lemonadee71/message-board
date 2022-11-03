@@ -1,0 +1,11 @@
+<div>
+  <p>The action has the following errors:</p>
+  <ul>
+    {% for e in errors %}
+      <li>
+        <strong>{{ e.param }}:</strong>
+        {{ e.msg }}
+      </li>
+    {% endfor %}
+  </ul>
+</div>

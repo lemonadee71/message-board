@@ -6,18 +6,17 @@
 
 {% block content %}
   {% if errors %}
-    <pre> {{ errors | dump }}</pre>
+    {% include "components/error_message.njk" %}
   {% endif %}
   <main class="container-auto mt-40">
     <form class="flex flex-col space-y-4" action="/login" method="post">
       <label for="username">
-        Username
-        <input type="text" name="username" id="username" required></label>
-
-        <label for="password">
-          Password
-          <input type="password" name="password" id="password" required></label>
-          <button class="font-semibold text-white px-4 py-2 bg-blue-600 rounded-lg focus:ring" type="submit">Login</button>
-        </form>
-      </main>
-    {% endblock %}
+        Username <input type="text" name="username" id="username" required>
+      </label>
+      <label for="password">
+        Password <input type="password" name="password" id="password" required>
+      </label>
+      <button class="font-semibold text-white px-4 py-2 bg-blue-600 rounded-lg focus:ring" type="submit">Login</button>
+    </form>
+  </main>
+{% endblock %}
