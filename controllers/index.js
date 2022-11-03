@@ -33,7 +33,6 @@ module.exports = {
         ),
       body('password')
         .trim()
-        .escape()
         .isStrongPassword()
         .withMessage('Password must be a strong password'),
       (req, res, next) => {
