@@ -1,0 +1,28 @@
+{% extends "layout.njk" %}
+
+{% block title %}
+  Sign up
+{% endblock %}
+
+{% block content %}
+  {% if errors %}
+    <pre> {{ errors | dump }}</pre>
+  {% endif %}
+  <main class="container-auto">
+    <h1 class="font-sans font-bold text-center text-3xl mt-40 mb-10">
+      Sign Up
+    </h1>
+
+    <form class="flex flex-col space-y-4" action="/signup" method="post">
+      <label for="username">
+        Username
+        <input type="text" name="username" id="username"></label>
+
+        <label for="password">
+          Password
+          <input type="password" name="password" id="password"></label>
+          <button class="font-semibold text-white px-4 py-2 bg-blue-600 rounded-lg focus:ring" type="submit">Submit</button>
+        </form>
+      </main>
+
+    {% endblock %}

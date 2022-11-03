@@ -1,0 +1,23 @@
+{% extends "layout.njk" %}
+
+{% block title %}
+  Login
+{% endblock %}
+
+{% block content %}
+  {% if errors %}
+    <pre> {{ errors | dump }}</pre>
+  {% endif %}
+  <main class="container-auto mt-40">
+    <form class="flex flex-col space-y-4" action="/login" method="post">
+      <label for="username">
+        Username
+        <input type="text" name="username" id="username"></label>
+
+        <label for="password">
+          Password
+          <input type="password" name="password" id="password"></label>
+          <button class="font-semibold text-white px-4 py-2 bg-blue-600 rounded-lg focus:ring" type="submit">Login</button>
+        </form>
+      </main>
+    {% endblock %}

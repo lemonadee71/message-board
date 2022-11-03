@@ -4,56 +4,38 @@
   {{ title }}
 {% endblock %}
 
-{% block head %}
-  <style>
-    .hero__title {
-      font-size: 34px;
-      font-weight: 700;
-    }
-    .hero__message {
-      font-size: 26px;
-      font-weight: 500;
-    }
-    .feed__header {
-      display: flex;
-      flex-direction: row;
-      margin-bottom: 2rem;
-    }
-    .feed__header h2 {
-      font-weight: 500;
-      margin-right: 3rem;
-    }
-    .message__text {
-      font-size: 22px;
-      font-weight: 400;
-    }
-  </style>
-{% endblock %}
-
 {% block content %}
-  <main class="container">
-    <div class="hero">
-      <h1 class="hero__title">{{ title }}</h1>
-      <p class="hero__message">This is {{ title }} and you're free to write anything you want.</p>
+  <header class="flex flex-row justify-between content-center px-8 py-4 mb-8">
+    <h1 class="font-bold text-xl align-middle">Preddit</h1>
+    <div class="space-x-8">
+      {% if currentUser %}
+        <a
+          href="/logout"
+          class="font-semibold text-lg text-white text-center rounded-lg px-4 py-2 bg-blue-600 border border-solid border-blue-600
+            focus:ring">
+          Logout</a>
+      {% else %}
+        <a
+          href="/signup"
+          class="font-semibold text-lg text-blue-600 text-center rounded-lg px-4 py-2 bg-white border border-solid border-blue-600
+            focus:ring">
+          Sign Up</a>
+        <a
+          href="/login"
+          class="font-semibold text-lg text-white text-center rounded-lg px-4 py-2 bg-blue-600 border border-solid border-blue-600
+            focus:ring">
+          Login</a>
+      {% endif %}
     </div>
-
-    <section class="container feed">
-      <div class="feed__header">
-        <h2>Feed</h2>
-        <a href="/new" role="button" aria-disabled="true" class="btn btn-primary">Post</a>
-      </div>
-
-      <div class="messages">
-        {% for message in messages %}
-          <div class="message">
-            <p class="message__text">
-              {{ message.text }}
-            </p>
-            <pre>By: {{ message.user }}</pre>
-            <pre>Posted: {{ message.added.toLocaleTimeString() }}</pre>
-          </div>
-        {% endfor %}
-      </div>
-    </section>
+  </header>
+  <main class="container-auto">
+    <h1 class="font-mono font-bold">
+      Hello,
+      {% if currentUser %}
+        {{ currentUser.display_name }}
+      {% else %}
+        world
+      {% endif %}!
+    </h1>
   </main>
 {% endblock %}
