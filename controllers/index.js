@@ -55,10 +55,22 @@ module.exports = {
     get: (req, res) => {
       res.render('login');
     },
-    post: passport.authenticate('local', {
-      successRedirect: '/',
-      failureRedirect: '/signup',
-    }),
+    post: [
+      (req, res, next) => {
+        passport.authenticate('local', (err, user) => {
+          if (err) {
+            return res.render('login', { errors: [{ msg: err.message }] });
+          }
+
+          if (!user) return res.redirect('/login');
+
+          req.login(user, next);
+        })(req, res, next);
+      },
+      (req, res) => {
+        res.redirect('/');
+      },
+    ],
   },
   logout: (req, res, next) => {
     req.logout((err) => {

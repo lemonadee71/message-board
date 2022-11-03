@@ -6,14 +6,16 @@ const User = require('../models/user');
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
+    const defaultError = new Error(
+      'You have entered an invalid username or password"'
+    );
+
     try {
-      const user = await User.findById(username).orFail(
-        new Error('User not found!')
-      );
+      const user = await User.findById(username).orFail(defaultError);
       const isMatch = await user.comparePassword(password);
 
       if (isMatch) done(null, user);
-      else done(null, false, { message: 'Incorrect pasword' });
+      else done(defaultError);
     } catch (error) {
       done(error);
     }
