@@ -36,10 +36,7 @@ module.exports = {
           // Might throw an error unrelated to validation (fetching errors)
           User.findById(value).then(
             (res) =>
-              res &&
-              Promise.reject(
-                new Error(`User with the username ${value} already exists`)
-              )
+              res && Promise.reject(new Error(`Username is already taken`))
           )
         ),
       body('password')
