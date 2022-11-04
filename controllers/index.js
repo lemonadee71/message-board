@@ -62,6 +62,13 @@ module.exports = {
     get: [
       isAlreadyLoggedIn,
       (req, res) => {
+        if (req.query.restricted) {
+          res.locals.messages = createMessages(
+            'warning',
+            'You must be logged in to continue'
+          );
+        }
+
         res.render('login');
       },
     ],

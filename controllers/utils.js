@@ -1,3 +1,5 @@
+const url = require('url');
+
 const ALERT_COLORS = {
   primary: {
     background: '#cfe2ff',
@@ -63,7 +65,12 @@ const isLoggedIn = (req, res, next) => {
   if (req.user && req.isAuthenticated()) {
     next();
   } else {
-    res.redirect('/login');
+    res.redirect(
+      url.format({
+        pathname: '/login',
+        query: { restricted: true },
+      })
+    );
   }
 };
 
