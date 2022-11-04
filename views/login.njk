@@ -5,9 +5,6 @@
 {% endblock %}
 
 {% block content %}
-  {% if errors %}
-    {% include "components/error_message.njk" %}
-  {% endif %}
   <main class="container-auto mt-40">
     <form class="flex flex-col space-y-4" action="/login" method="post">
       <label for="username">

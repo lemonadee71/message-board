@@ -7,7 +7,7 @@ const User = require('../models/user');
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     const defaultError = new Error(
-      'You have entered an invalid username or password"'
+      'You have entered an invalid username or password'
     );
 
     try {

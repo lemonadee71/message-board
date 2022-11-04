@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 const User = require('../models/user');
+const { createMessages } = require('./utils');
 
 const isAlreadyLoggedIn = (req, res, next) => {
   if (req.user && req.isAuthenticated()) {
@@ -50,7 +51,9 @@ module.exports = {
         if (errors.isEmpty()) {
           new User({ username, password }).save(next);
         } else {
-          res.render('signup', { errors: errors.array() });
+          res.render('signup', {
+            messages: createMessages('danger', errors.array()),
+          });
         }
       },
       passport.authenticate('local', {
@@ -70,7 +73,9 @@ module.exports = {
       (req, res, next) => {
         passport.authenticate('local', (err, user) => {
           if (err) {
-            return res.render('login', { errors: [{ msg: err.message }] });
+            return res.render('login', {
+              messages: createMessages('danger', err),
+            });
           }
 
           if (!user) return res.redirect('/login');

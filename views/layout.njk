@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="stylesheets/vendor.css">
   </head>
   <body>
+    {% if messages %}
+      {% include "components/alert.njk" %}
+    {% endif %}
     {% block content %}{% endblock %}
   </body>
 </html>

@@ -5,9 +5,6 @@
 {% endblock %}
 
 {% block content %}
-  {% if errors %}
-    {% include "components/error_message.njk" %}
-  {% endif %}
   <main class="container-auto">
     <h1 class="font-sans font-bold text-center text-3xl mt-40 mb-10">
       Sign Up
@@ -22,5 +19,4 @@
       <button class="font-semibold text-white px-4 py-2 bg-blue-600 rounded-lg focus:ring" type="submit">Submit</button>
     </form>
   </main>
-
 {% endblock %}

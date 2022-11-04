@@ -1,0 +1,20 @@
+<div
+  class="container-auto rounded-md px-6 py-4 my-6 border border-solid"
+  style="background: {{ messages.colors.background }}; color: {{ messages.colors.text }}; border-color: {{
+    messages.colors.border }};">
+  {% if messages.header %}
+    <p>{{ messages.header }}</p>
+  {% endif %}
+  {% if messages.items.length > 1 %}
+    <ul class="ml-4">
+      {% for e in messages.items %}
+        <li>
+          <strong>{{ e.param | capitalize }}:</strong>
+          {{ e.message }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>&#9888; {{ messages.items[0].message }}</p>
+  {% endif %}
+</div>
