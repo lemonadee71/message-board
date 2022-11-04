@@ -2,15 +2,7 @@ const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 const User = require('../models/user');
-const { createMessages, hasNoSpace } = require('./utils');
-
-const isAlreadyLoggedIn = (req, res, next) => {
-  if (req.user && req.isAuthenticated()) {
-    res.redirect('/');
-  } else {
-    next();
-  }
-};
+const { createMessages, hasNoSpace, isAlreadyLoggedIn } = require('./utils');
 
 module.exports = {
   home: (req, res) => {

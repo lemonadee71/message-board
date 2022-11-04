@@ -31,12 +31,14 @@ const ALERT_COLORS = {
   },
 };
 
-exports.createMessages = (type, items, header) => ({
+const createMessages = (type, items, header) => ({
   header,
   items: [items].flat().map((e) => {
     let copy;
     if (e instanceof Error) {
       copy = { message: e.message };
+    } else if (typeof e === 'string') {
+      copy = { message: e };
     } else {
       copy = { ...e };
       delete copy.msg;
@@ -47,4 +49,22 @@ exports.createMessages = (type, items, header) => ({
   colors: ALERT_COLORS[type],
 });
 
-exports.hasNoSpace = (value) => !/\s/.test(value);
+const hasNoSpace = (value) => !/\s/.test(value);
+
+const isAlreadyLoggedIn = (req, res, next) => {
+  if (req.user && req.isAuthenticated()) {
+    res.redirect('/');
+  } else {
+    next();
+  }
+};
+
+const isLoggedIn = (req, res, next) => {
+  if (req.user && req.isAuthenticated()) {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+};
+
+module.exports = { createMessages, hasNoSpace, isAlreadyLoggedIn, isLoggedIn };
