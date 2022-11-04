@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 const User = require('../models/user');
-const { createMessages } = require('./utils');
+const { createMessages, hasNoSpace } = require('./utils');
 
 const isAlreadyLoggedIn = (req, res, next) => {
   if (req.user && req.isAuthenticated()) {
@@ -27,6 +27,8 @@ module.exports = {
       body('username')
         .trim()
         .escape()
+        .custom(hasNoSpace)
+        .withMessage('No spaces are allowed')
         .isAlphanumeric()
         .withMessage('Username has non-alphanumeric characters')
         .isLength({ min: 4, max: 30 })
@@ -42,6 +44,8 @@ module.exports = {
         ),
       body('password')
         .trim()
+        .custom(hasNoSpace)
+        .withMessage('No spaces are allowed')
         .isStrongPassword()
         .withMessage('Password must be a strong password'),
       (req, res, next) => {

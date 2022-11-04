@@ -46,3 +46,5 @@ exports.createMessages = (type, items, header) => ({
   }),
   colors: ALERT_COLORS[type],
 });
+
+exports.hasNoSpace = (value) => !/\s/.test(value);
