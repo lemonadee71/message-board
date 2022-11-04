@@ -3,14 +3,25 @@ const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 const User = require('../models/user');
 
+const isAlreadyLoggedIn = (req, res, next) => {
+  if (req.user && req.isAuthenticated()) {
+    res.redirect('/');
+  } else {
+    next();
+  }
+};
+
 module.exports = {
   home: (req, res) => {
     res.render('index', { title: "Lemon's Message Board" });
   },
   signup: {
-    get: (req, res) => {
-      res.render('signup');
-    },
+    get: [
+      isAlreadyLoggedIn,
+      (req, res) => {
+        res.render('signup');
+      },
+    ],
     post: [
       body('username')
         .trim()
@@ -27,7 +38,7 @@ module.exports = {
             (res) =>
               res &&
               Promise.reject(
-                new Error(`User with the username, ${value} already exists`)
+                new Error(`User with the username ${value} already exists`)
               )
           )
         ),
@@ -40,7 +51,7 @@ module.exports = {
         const { username, password } = req.body;
 
         if (errors.isEmpty()) {
-          new User({ username, password }).save(() => next());
+          new User({ username, password }).save(next);
         } else {
           res.render('signup', { errors: errors.array() });
         }
@@ -52,9 +63,12 @@ module.exports = {
     ],
   },
   login: {
-    get: (req, res) => {
-      res.render('login');
-    },
+    get: [
+      isAlreadyLoggedIn,
+      (req, res) => {
+        res.render('login');
+      },
+    ],
     post: [
       (req, res, next) => {
         passport.authenticate('local', (err, user) => {
