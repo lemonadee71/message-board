@@ -74,6 +74,8 @@ module.exports = {
       },
     ],
     post: [
+      body('username').trim().escape(),
+      body('password').trim(),
       (req, res, next) => {
         passport.authenticate('local', (err, user) => {
           if (err) {
