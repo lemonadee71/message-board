@@ -14,7 +14,7 @@ const isAlreadyLoggedIn = (req, res, next) => {
 
 module.exports = {
   home: (req, res) => {
-    res.render('index', { title: "Lemon's Message Board" });
+    res.render('index');
   },
   signup: {
     get: [
