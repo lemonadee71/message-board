@@ -43,7 +43,7 @@ module.exports = [
   passport.session(),
   // make user accessible to views
   (req, res, next) => {
-    res.locals.currentUser = req.user;
+    res.locals.current_user = req.user;
     next();
   },
 ];
