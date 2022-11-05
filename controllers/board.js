@@ -1,5 +1,6 @@
 const { body, param, validationResult } = require('express-validator');
 const Board = require('../models/board');
+const User = require('../models/user');
 const { hasNoSpace, createMessages, isLoggedIn } = require('./utils');
 
 module.exports = {
@@ -56,7 +57,12 @@ module.exports = {
             creator: req.user.username,
           })
             .save()
-            .then((board) => res.redirect(board.url));
+            .then((board) => {
+              User.findById(req.user.username).then((user) => {
+                user.boards.push(board.boardname);
+                user.save().then(() => res.redirect(board.url));
+              });
+            });
         } else {
           res.render('pages/board/create_form', {
             messages: createMessages('danger', errors.array()),
