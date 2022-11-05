@@ -1,33 +1,9 @@
 {% set title = "Home" %}
-{% extends "layouts/base.njk" %}
+{% extends "layouts/main.njk" %}
 
-{% block body %}
-  <header class="flex flex-row justify-between content-center px-8 pt-6 pb-4 mb-8">
-    <h1 class="font-bold text-xl align-middle">Privvit</h1>
-    <div class="space-x-6">
-      {% if current_user %}
-        <a
-          href="/logout"
-          class="font-semibold text-lg text-white text-center rounded-lg px-4 py-2 bg-blue-600 border border-solid border-blue-600
-            focus:ring">
-          Logout</a>
-      {% else %}
-        <a
-          href="/signup"
-          class="font-semibold text-lg text-blue-600 text-center rounded-lg px-4 py-2 bg-white border border-solid border-blue-600
-            focus:ring">
-          Sign Up</a>
-        <a
-          href="/login"
-          class="font-semibold text-lg text-white text-center rounded-lg px-4 py-2 bg-blue-600 border border-solid border-blue-600
-            focus:ring">
-          Login</a>
-      {% endif %}
-    </div>
-  </header>
-  <main class="container-auto">
-    <h1 class="font-mono font-bold">
-      Hello, {{ current_user.display_name if current_user else "world" }}!
-    </h1>
-  </main>
+{% block main %}
+  <h1 class="font-mono font-semibold">
+    Hello, {{ current_user.display_name if current_user else "world" }}!
+  </h1>
+  <pre>{{ current_user | dump(2) }}</pre>
 {% endblock %}

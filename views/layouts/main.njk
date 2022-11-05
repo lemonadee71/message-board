@@ -1,0 +1,31 @@
+{% extends "layouts/base.njk" %}
+
+{% block body %}
+  {# Header #}
+  <header class="flex flex-row justify-between content-center px-8 pt-6 pb-4 mb-8">
+    <h1 class="font-bold text-xl align-middle">Privvit</h1>
+    <div class="space-x-3">
+      {% if current_user %}
+        <a
+          href="/logout"
+          class="font-semibold text-white text-center rounded-lg px-4 py-2 bg-blue-600 border border-solid border-blue-600
+            focus:ring">
+          Logout</a>
+      {% else %}
+        <a
+          href="/signup"
+          class="font-semibold text-blue-600 text-center rounded-lg px-4 py-2 bg-white border border-solid border-blue-600
+            focus:ring">
+          Sign Up</a>
+        <a
+          href="/login"
+          class="font-semibold text-white text-center rounded-lg px-4 py-2 bg-blue-600 border border-solid border-blue-600
+            focus:ring">
+          Login</a>
+      {% endif %}
+    </div>
+  </header>
+  <main class="container-auto">
+    {% block main %}{% endblock %}
+  </main>
+{% endblock %}
