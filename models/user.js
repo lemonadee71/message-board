@@ -35,4 +35,10 @@ UserSchema.methods.comparePassword = function (input) {
   return bcrypt.compare(input, this.password);
 };
 
+UserSchema.methods.toSafeObject = function () {
+  const o = this.toObject({ virtuals: true });
+  delete o.password;
+  return o;
+};
+
 module.exports = mongoose.model('User', UserSchema);
