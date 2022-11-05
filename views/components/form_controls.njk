@@ -15,3 +15,13 @@
     {% endif %}
   </label>
 {% endmacro %}
+
+{% macro form(title, action) %}
+  <div class="mt-8 mx-auto max-w-md">
+    <h1 class="font-bold text-2xl mb-6">{{ title }}</h1>
+    <form class="space-y-6" action="{{ action }}" method="post">
+      {{ caller() }}
+      <button class="font-semibold text-white px-4 py-2 bg-blue-600 rounded-lg focus:ring" type="submit">Submit</button>
+    </form>
+  </div>
+{% endmacro %}
