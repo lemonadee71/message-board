@@ -1,8 +1,13 @@
-{% extends "layouts/base.njk" %}
+{% extends "layouts/main.njk" %}
 
-{% block body %}
-  <main class="container-auto">
-    <h1>{{ board.boardname }}</h1>
-    <pre>{{ board | dump(2) }}</pre>
-  </main>
+{% macro is_member() -%}
+  {{ ("leave" if is_current_user_member else "join") }}
+{%- endmacro %}
+
+{% block main %}
+  <h1 class="font-semibold text-lg">{{ board.boardname }}</h1>
+  <pre>{{ board | dump(2) }}</pre>
+  <a href="{{ board.url }}/{{ is_member() }}" class="font-semibold text-white text-center rounded-md px-4 py-1 bg-blue-600 border border-solid border-blue-600 focus:ring">
+    {{ is_member() | capitalize }}
+  </a>
 {% endblock %}

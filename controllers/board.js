@@ -46,6 +46,7 @@ module.exports = {
         .optional({ checkFalsy: true })
         .trim()
         .escape()
+        .isEmpty()
         .custom(hasNoSpace)
         .withMessage('No spaces are allowed')
         .isAlphanumeric()
@@ -89,7 +90,12 @@ module.exports = {
             const copy = board.toObject({ virtuals: true });
             delete copy.passcode;
 
-            res.render('pages/board/index', { board: copy });
+            res.render('pages/board/index', {
+              board: copy,
+              is_current_user_member: req.user?.boards.includes(
+                board.boardname
+              ),
+            });
           })
           .catch(next);
       },
