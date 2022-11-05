@@ -3,18 +3,18 @@
   style="background: {{ messages.colors.background }}; color: {{ messages.colors.text }}; border-color: {{
     messages.colors.border }};">
   {% if messages.header %}
-    <p>{{ messages.header }}</p>
+    <p>&#9888; {{ messages.header }}</p>
   {% endif %}
-  {% if messages.items.length > 1 %}
+  {% if messages.items and messages.items.length > 0 %}
     <ul class="ml-4">
-      {% for e in messages.items %}
+      {% for param, items in messages.items | groupby("param") %}
         <li>
-          <strong>{{ e.param | capitalize }}:</strong>
-          {{ e.message }}
+          <strong>{{ param | capitalize }}:</strong>
+          {% for item in items %}
+            {{ item.message if loop.first else (item.message | lower) }}{{ "," if not loop.last }}
+          {% endfor %}
         </li>
       {% endfor %}
     </ul>
-  {% else %}
-    <p>&#9888; {{ messages.items[0].message }}</p>
   {% endif %}
 </div>

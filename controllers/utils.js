@@ -35,19 +35,21 @@ const ALERT_COLORS = {
 
 const createMessages = (type, items, header) => ({
   header,
-  items: [items].flat().map((e) => {
-    let copy;
-    if (e instanceof Error) {
-      copy = { message: e.message };
-    } else if (typeof e === 'string') {
-      copy = { message: e };
-    } else {
-      copy = { ...e };
-      delete copy.msg;
-      copy.message = e.msg;
-    }
-    return copy;
-  }),
+  items:
+    items &&
+    [items].flat().map((e) => {
+      let copy;
+      if (e instanceof Error) {
+        copy = { message: e.message };
+      } else if (typeof e === 'string') {
+        copy = { message: e };
+      } else {
+        copy = { ...e };
+        delete copy.msg;
+        copy.message = e.msg;
+      }
+      return copy;
+    }),
   colors: ALERT_COLORS[type],
 });
 

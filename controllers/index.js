@@ -65,6 +65,7 @@ module.exports = {
         if (req.query.restricted) {
           res.locals.messages = createMessages(
             'warning',
+            null,
             'You must be logged in to continue'
           );
         }
@@ -79,7 +80,7 @@ module.exports = {
         passport.authenticate('local', (err, user) => {
           if (err) {
             return res.render('login', {
-              messages: createMessages('danger', err),
+              messages: createMessages('danger', null, err.message),
             });
           }
 
