@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Timestamp, ObjectId } = require('./utils');
+const { Timestamp } = require('./utils');
 
 const Schema = mongoose.Schema;
 
@@ -13,14 +13,13 @@ const BoardSchema = new Schema({
     type: String,
     maxLength: 50,
     default: function () {
-      return this.name;
+      return this.boardname;
     },
   },
   description: String,
   // TODO: allow custom passcodes
   passcode: {
     type: String,
-    required: true,
     default: () => Math.random().toString(36).slice(2, 8),
   },
   // if set to true, all posts will be hidden for non-members
@@ -30,7 +29,7 @@ const BoardSchema = new Schema({
 });
 
 BoardSchema.virtual('url').get(function () {
-  return `/b/${this.name}`;
+  return `/b/${this.boardname}`;
 });
 
 module.exports = mongoose.model('Board', BoardSchema);
