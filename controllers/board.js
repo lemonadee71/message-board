@@ -3,6 +3,14 @@ const Board = require('../models/board');
 const User = require('../models/user');
 const { hasNoSpace, createMessages, isLoggedIn } = require('./utils');
 
+const boardNotFound = (err, req, res, next) => {
+  if (err.message === 'Board not found') {
+    return res.render('pages/board/not_found');
+  }
+
+  next(err);
+};
+
 module.exports = {
   create: {
     get: [isLoggedIn, (req, res) => res.render('pages/board/create_form')],
@@ -75,16 +83,17 @@ module.exports = {
     get: [
       param('boardname').escape(),
       (req, res, next) => {
-        Board.findById(req.params.boardname).exec((err, board) => {
-          if (err) return next(err);
-          if (!board) return res.render('pages/board/not_found');
+        Board.findById(req.params.boardname)
+          .orFail(new Error('Board not found'))
+          .then((board) => {
+            const copy = board.toObject({ virtuals: true });
+            delete copy.passcode;
 
-          const copy = board.toObject({ virtuals: true });
-          delete copy.passcode;
-
-          res.render('pages/board/index', { board: copy });
-        });
+            res.render('pages/board/index', { board: copy });
+          })
+          .catch(next);
       },
+      boardNotFound,
     ],
   },
 };
