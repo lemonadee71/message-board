@@ -1,10 +1,10 @@
 {% set title = "Create board" %}
-{% from "../../components/form_controls.njk" import input %}
-{% extends "../../layouts/base.njk" %}
+{% from "components/form_controls.njk" import input %}
+{% extends "layouts/base.njk" %}
 
 {% block body %}
   {% if messages %}
-    {% include "../../components/alert.njk" %}
+    {% include "components/alert.njk" %}
   {% endif %}
   <main class="container-auto">
     <div class="mt-8 mx-auto max-w-md">
