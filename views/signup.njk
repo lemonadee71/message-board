@@ -1,19 +1,16 @@
 {% set title = "Sign up" %}
+{% from "components/form_controls.njk" import input %}
 {% extends "layout.njk" %}
 
 {% block content %}
   <main class="container-auto">
-    <h1 class="font-sans font-bold text-center text-3xl mt-40 mb-10">
-      Sign Up
-    </h1>
-    <form class="flex flex-col space-y-4" action="/signup" method="post">
-      <label for="username">
-        Username <input type="text" name="username" id="username" required>
-      </label>
-      <label for="password">
-        Password <input type="password" name="password" id="password" required>
-      </label>
-      <button class="font-semibold text-white px-4 py-2 bg-blue-600 rounded-lg focus:ring" type="submit">Submit</button>
-    </form>
+    <div class="mt-8 mx-auto max-w-md">
+      <h1 class="font-bold text-2xl mb-6">{{ title }}</h1>
+      <form class="space-y-6" action="/signup" method="post">
+        {{ input('text', 'username', required=true, show_required=false) }}
+        {{ input('password', 'password', required=true, show_required=false) }}
+        <button class="font-semibold text-white px-4 py-2 bg-blue-600 rounded-lg focus:ring" type="submit">Submit</button>
+      </form>
+    </div>
   </main>
 {% endblock %}
