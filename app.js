@@ -29,6 +29,7 @@ app.use(require('./middlewares/session'));
 app.use(require('./middlewares/passport'));
 
 app.use('/', require('./routes/index'));
+app.use('/b', require('./routes/board'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
