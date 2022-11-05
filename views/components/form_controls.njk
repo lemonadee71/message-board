@@ -1,0 +1,17 @@
+{# TODO: Allow switching of position #}
+{% macro input(type, name, label="", required=false, show_required=true, placeholder="", class="mt-1 block w-full", attrs="") %}
+  {% if not label %}
+    {% set label = name %}
+  {% endif %}
+  <label class="block">
+    <span class="text-gray-700">{{ label | capitalize }}</span>
+    {% if required and show_required %}
+      <span class="text-red-600">*</span>
+    {% endif %}
+    {% if type === "textarea" %}
+      <textarea class="mt-1 block w-full" rows="3" name="{{ name }}" {{ attrs }}></textarea>
+    {% else %}
+      <input type="{{ type }}" name="{{ name }}" class="{{ class }}" placeholder="{{ placeholder }}" {{ "required" if required else "" }} {{ attrs }}/>
+    {% endif %}
+  </label>
+{% endmacro %}
