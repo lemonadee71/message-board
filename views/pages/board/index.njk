@@ -1,6 +1,6 @@
-{% extends "layout.njk" %}
+{% extends "../../layouts/base.njk" %}
 
-{% block content %}
+{% block body %}
   <main class="container-auto">
     <h1>{{ board.boardname }}</h1>
     <pre>{{ board | dump(2) }}</pre>
