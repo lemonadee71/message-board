@@ -42,24 +42,42 @@ module.exports = {
         .isAlphanumeric()
         .withMessage('Input has non-alphanumeric characters'),
       body('description').optional({ checkFalsy: true }).trim().escape(),
-      body('private').optional({ checkFalsy: true }),
+      body('private').optional({ checkFalsy: true }).toBoolean(),
       (req, res) => {
         const errors = validationResult(req);
 
         if (errors.isEmpty()) {
           new Board({
             boardname: req.body.boardname,
-            display_name: req.body.display_name,
-            passcode: req.body.passcode,
+            display_name: req.body.display_name || undefined,
+            passcode: req.body.passcode || undefined,
             description: req.body.description,
             private: req.body.private,
             creator: req.user.username,
-          }).save((board) => res.redirect(board.url));
+          })
+            .save()
+            .then((board) => res.redirect(board.url));
         } else {
           res.render('pages/board/create_form', {
             messages: createMessages('danger', errors.array()),
           });
         }
+      },
+    ],
+  },
+  page: {
+    get: [
+      param('boardname').escape(),
+      (req, res, next) => {
+        Board.findById(req.params.boardname).exec((err, board) => {
+          if (err) return next(err);
+          if (!board) return res.render('pages/board/not_found');
+
+          const copy = board.toObject({ virtuals: true });
+          delete copy.passcode;
+
+          res.render('pages/board/index', { board: copy });
+        });
       },
     ],
   },
