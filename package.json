@@ -3,13 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=production node ./bin/www",
-    "start:dev": "NODE_ENV=development nodemon ./bin/www",
     "lint": "eslint . --ext .js --ignore-pattern node_modules/",
     "test": "jest",
     "test:watch": "jest --watch",
     "tailwind:build": "npx parcel build src/vendor.css --target build --no-source-maps",
-    "tailwind:watch": "nodemon --exec 'npm run tailwind:build' -e njk"
+    "tailwind:watch": "nodemon --exec 'npm run tailwind:build' -e njk",
+    "watch": "NODE_ENV=development nodemon ./bin/www",
+    "start": "NODE_ENV=production node ./bin/www",
+    "start:dev": "concurrently --kill-others -c green,cyan -n server,tailwind \"npm run watch\" \"npm run tailwind:watch\""
   },
   "dependencies": {
     "async": "^3.2.4",
