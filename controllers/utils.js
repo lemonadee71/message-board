@@ -53,7 +53,6 @@ const createMessages = (type, items, header) => ({
 
 const extractFlashMessages = (key, type) => (req, res, next) => {
   const messages = req.flash(key);
-  console.log({ key, type, messages });
 
   if (messages.length > 1) {
     res.locals.messages = createMessages(type || key, messages);

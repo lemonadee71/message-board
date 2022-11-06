@@ -162,4 +162,21 @@ module.exports = {
       boardNotFound,
     ],
   },
+  leave: {
+    post: [
+      isLoggedIn,
+      async (req, res) => {
+        req.user.boards = req.user.boards.filter(
+          (v) => v !== req.params.boardname
+        );
+        await req.user.save();
+
+        req.flash(
+          'success',
+          `You successfully left /b/${req.params.boardname}`
+        );
+        res.redirect('/');
+      },
+    ],
+  },
 };

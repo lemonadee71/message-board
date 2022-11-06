@@ -7,7 +7,18 @@
 {% block main %}
   <h1 class="font-semibold text-lg">{{ board.boardname }}</h1>
   <pre>{{ board | dump(2) }}</pre>
-  <a href="{{ board.url }}/{{ is_member() }}" class="font-semibold text-white text-center rounded-md px-4 py-1 bg-blue-600 border border-solid border-blue-600 focus:ring">
-    {{ is_member() | capitalize }}
-  </a>
+  {% if is_current_user_member %}
+    <form action="{{ board.url }}/leave" method="post">
+      <button
+        type="submit"
+        class="font-semibold text-white text-center rounded-md px-4 py-1 bg-blue-600 border border-solid border-blue-600
+          focus:ring">
+        Leave
+      </button>
+    </form>
+  {% else %}
+    <a href="{{ board.url }}/join" class="font-semibold text-white text-center rounded-md px-4 py-1 bg-blue-600 border border-solid border-blue-600 focus:ring">
+      Join
+    </a>
+  {% endif %}
 {% endblock %}
