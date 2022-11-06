@@ -10,7 +10,10 @@ const UserSchema = new Schema({
     maxLength: 30,
     alias: 'username',
   },
-  password: { type: String, required: true },
+  password: {
+    type: String,
+    required: true,
+  },
   display_name: {
     type: String,
     maxLength: 30,
@@ -24,12 +27,18 @@ const UserSchema = new Schema({
 });
 
 UserSchema.pre('save', async function () {
-  this.password = await bcrypt.hash(this.password, 10);
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 });
 
 UserSchema.virtual('url').get(function () {
   return `/u/${this.username}`;
 });
+
+UserSchema.methods.setPassword = async function (newPassword) {
+  this.password = await bcrypt.hash(newPassword, 10);
+};
 
 UserSchema.methods.comparePassword = function (input) {
   return bcrypt.compare(input, this.password);

@@ -67,10 +67,8 @@ module.exports = {
           })
             .save()
             .then((board) => {
-              User.findById(req.user.username).then((user) => {
-                user.boards.push(board.boardname);
-                user.save().then(() => res.redirect(board.url));
-              });
+              req.user.boards = [...req.user.boards, board.boardname];
+              req.user.save().then(() => res.redirect(board.url));
             });
         } else {
           res.render('pages/board/create_form', {
