@@ -32,4 +32,13 @@ BoardSchema.virtual('url').get(function () {
   return `/b/${this.boardname}`;
 });
 
+BoardSchema.methods.join = function (user, passcode) {
+  if (passcode === this.passcode) {
+    user.boards.push(this.boardname);
+    return user.save();
+  }
+
+  throw new Error('Wrong passcode');
+};
+
 module.exports = mongoose.model('Board', BoardSchema);
