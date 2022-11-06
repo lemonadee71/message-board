@@ -99,7 +99,7 @@ module.exports = {
     req.logout((err) => {
       if (err) return next(err);
 
-      res.redirect('/');
+      res.redirect(new URL(req.get('referer')).pathname);
     });
   },
 };

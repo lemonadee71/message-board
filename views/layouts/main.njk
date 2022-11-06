@@ -8,11 +8,14 @@
     </h1>
     <div class="space-x-3">
       {% if current_user %}
-        <a
-          href="/logout"
-          class="font-semibold text-white text-center rounded-lg px-4 py-2 bg-blue-600 border border-solid border-blue-600
-            focus:ring">
-          Logout</a>
+        <form action="/logout" method="post">
+          <button
+            type="submit"
+            class="font-semibold text-white text-center rounded-lg px-4 py-2 bg-blue-600 border border-solid border-blue-600
+              focus:ring">
+            Logout
+          </button>
+        </form>
       {% else %}
         <a
           href="/signup"
