@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable import/no-extraneous-dependencies, no-console  */
 const mongoose = require('mongoose');
 
 exports.connectDB = async function () {
