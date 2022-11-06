@@ -11,6 +11,8 @@ const boardNotFound = (err, req, res, next) => {
   next(err);
 };
 
+const isMember = (user, boardname) => user?.boards.includes(boardname);
+
 module.exports = {
   create: {
     get: [isLoggedIn, (req, res) => res.render('pages/board/create_form')],
@@ -46,7 +48,6 @@ module.exports = {
         .optional({ checkFalsy: true })
         .trim()
         .escape()
-        .isEmpty()
         .custom(hasNoSpace)
         .withMessage('No spaces are allowed')
         .isAlphanumeric()
@@ -90,10 +91,65 @@ module.exports = {
 
             res.render('pages/board/index', {
               board: copy,
-              is_current_user_member: req.user?.boards.includes(
-                board.boardname
-              ),
+              is_current_user_member: isMember(req.user, board.boardname),
             });
+          })
+          .catch(next);
+      },
+      boardNotFound,
+    ],
+  },
+  join: {
+    get: [
+      isLoggedIn,
+      param('boardname').escape(),
+      // Redirect if already a member
+      (req, res, next) => {
+        if (isMember(req.user, req.params.boardname)) {
+          return res.redirect(`/b/${req.params.boardname}`);
+        }
+
+        next();
+      },
+      (req, res) => {
+        res.render('pages/board/join_form', {
+          boardname: req.params.boardname,
+          is_current_user_member: isMember(req.user, req.params.boardname),
+        });
+      },
+    ],
+    post: [
+      isLoggedIn,
+      param('boardname').escape(),
+      body('passcode')
+        .trim()
+        .escape()
+        .custom(hasNoSpace)
+        .withMessage('No spaces are allowed')
+        .isAlphanumeric()
+        .withMessage('Input has non-alphanumeric characters'),
+      (req, res, next) => {
+        Board.findById(req.params.boardname)
+          .orFail(new Error('Board not found'))
+          .then(async (board) => {
+            const errors = validationResult(req);
+            res.locals.boardname = req.params.boardname;
+
+            if (errors.isEmpty()) {
+              try {
+                await board.join(req.user, req.body.passcode);
+                return res.redirect(board.url);
+              } catch (err) {
+                res.locals.messages = createMessages('danger', {
+                  msg: err.message,
+                  param: 'passcode',
+                });
+              }
+            } else {
+              res.locals.messages = createMessages('danger', errors.array());
+            }
+
+            res.render('pages/board/join_form');
           })
           .catch(next);
       },
