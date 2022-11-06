@@ -1,8 +1,9 @@
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const passport = require('passport');
+const { isAlreadyLoggedIn } = require('../middlewares/authentication');
 const User = require('../models/user');
-const { createMessages, hasNoSpace, isAlreadyLoggedIn } = require('./utils');
+const { createMessages, hasNoSpace } = require('./utils');
 
 module.exports = {
   home: (req, res) => {
@@ -63,7 +64,6 @@ module.exports = {
       isAlreadyLoggedIn,
       (req, res) => {
         const flashMessage = req.flash('restricted')[0];
-        console.log(flashMessage);
 
         if (flashMessage) {
           res.locals.messages = createMessages('warning', null, flashMessage);

@@ -1,7 +1,8 @@
 const { body, param, validationResult } = require('express-validator');
+const { isLoggedIn } = require('../middlewares/authentication');
 const Board = require('../models/board');
 const User = require('../models/user');
-const { hasNoSpace, createMessages, isLoggedIn } = require('./utils');
+const { hasNoSpace, createMessages } = require('./utils');
 
 const boardNotFound = (err, req, res, next) => {
   if (err.message === 'Board not found') {

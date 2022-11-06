@@ -1,5 +1,3 @@
-const url = require('url');
-
 const ALERT_COLORS = {
   primary: {
     background: '#cfe2ff',
@@ -55,21 +53,4 @@ const createMessages = (type, items, header) => ({
 
 const hasNoSpace = (value) => !/\s/.test(value);
 
-const isAlreadyLoggedIn = (req, res, next) => {
-  if (req.user && req.isAuthenticated()) {
-    res.redirect('/');
-  } else {
-    next();
-  }
-};
-
-const isLoggedIn = (req, res, next) => {
-  if (req.user && req.isAuthenticated()) {
-    next();
-  } else {
-    req.flash('restricted', 'You must be logged in to continue');
-    res.redirect('/login');
-  }
-};
-
-module.exports = { createMessages, hasNoSpace, isAlreadyLoggedIn, isLoggedIn };
+module.exports = { createMessages, hasNoSpace };
