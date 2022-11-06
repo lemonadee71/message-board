@@ -27,6 +27,11 @@
       {% endif %}
     </div>
   </header>
+  <section>
+    {% if messages %}
+      {% include "components/alert.njk" %}
+    {% endif %}
+  </section>
   <main class="container-auto">
     {% block main %}{% endblock %}
   </main>

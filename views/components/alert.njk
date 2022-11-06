@@ -3,7 +3,7 @@
   style="background: {{ messages.colors.background }}; color: {{ messages.colors.text }}; border-color: {{
     messages.colors.border }};">
   {% if messages.header %}
-    <p>&#9888; {{ messages.header }}</p>
+    <p>{{ messages.header }}</p>
   {% endif %}
   {% if messages.items and messages.items.length > 0 %}
     <ul class="ml-4">

@@ -1,8 +1,7 @@
 const { body, param, validationResult } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
 const Board = require('../models/board');
-const User = require('../models/user');
-const { hasNoSpace, createMessages } = require('./utils');
+const { hasNoSpace, createMessages, extractFlashMessages } = require('./utils');
 
 const boardNotFound = (err, req, res, next) => {
   if (err.message === 'Board not found') {
@@ -83,6 +82,8 @@ module.exports = {
   page: {
     get: [
       param('boardname').escape(),
+      extractFlashMessages('info'),
+      extractFlashMessages('success'),
       (req, res, next) => {
         Board.findById(req.params.boardname)
           .orFail(new Error('Board not found'))
@@ -106,7 +107,10 @@ module.exports = {
       param('boardname').escape(),
       // Redirect if already a member
       (req, res, next) => {
-        if (isMember(req.user, req.params.boardname)) {
+        req.isMember = isMember(req.user, req.params.boardname);
+
+        if (req.isMember) {
+          req.flash('info', 'You are already a member of this board');
           return res.redirect(`/b/${req.params.boardname}`);
         }
 
@@ -115,7 +119,7 @@ module.exports = {
       (req, res) => {
         res.render('pages/board/join_form', {
           boardname: req.params.boardname,
-          is_current_user_member: isMember(req.user, req.params.boardname),
+          is_current_user_member: req.isMember,
         });
       },
     ],
@@ -139,6 +143,7 @@ module.exports = {
             if (errors.isEmpty()) {
               try {
                 await board.join(req.user, req.body.passcode);
+                req.flash('success', `You successfully joined ${board.url}`);
                 return res.redirect(board.url);
               } catch (err) {
                 res.locals.messages = createMessages('danger', {

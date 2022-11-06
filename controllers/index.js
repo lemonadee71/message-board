@@ -1,14 +1,16 @@
-const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 const { isAlreadyLoggedIn } = require('../middlewares/authentication');
 const User = require('../models/user');
-const { createMessages, hasNoSpace } = require('./utils');
+const { createMessages, hasNoSpace, extractFlashMessages } = require('./utils');
 
 module.exports = {
-  home: (req, res) => {
-    res.render('index');
-  },
+  home: [
+    extractFlashMessages('success'),
+    (req, res) => {
+      res.render('index');
+    },
+  ],
   signup: {
     get: [
       isAlreadyLoggedIn,
@@ -46,7 +48,14 @@ module.exports = {
         const { username, password } = req.body;
 
         if (errors.isEmpty()) {
-          new User({ username, password }).save(next);
+          new User({ username, password }).save((err) => {
+            if (err) return next(err);
+
+            // BUG: Message not showing
+            // TODO: Link to a first-timers guide
+            req.flash('success', 'You successfully created your account!');
+            next();
+          });
         } else {
           res.render('signup', {
             messages: createMessages('danger', errors.array()),
@@ -62,15 +71,8 @@ module.exports = {
   login: {
     get: [
       isAlreadyLoggedIn,
-      (req, res) => {
-        const flashMessage = req.flash('restricted')[0];
-
-        if (flashMessage) {
-          res.locals.messages = createMessages('warning', null, flashMessage);
-        }
-
-        res.render('login');
-      },
+      extractFlashMessages('restricted', 'warning'),
+      (req, res) => res.render('login'),
     ],
     post: [
       body('username').trim().escape(),
