@@ -5,6 +5,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const nunjucks = require('nunjucks');
+const flash = require('connect-flash');
 
 const { connectDB } = require('./db');
 const app = express();
@@ -27,6 +28,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('./middlewares/session'));
 app.use(require('./middlewares/passport'));
+app.use(flash());
 
 app.use('/', require('./routes/index'));
 app.use('/b', require('./routes/board'));

@@ -62,12 +62,11 @@ module.exports = {
     get: [
       isAlreadyLoggedIn,
       (req, res) => {
-        if (req.query.restricted) {
-          res.locals.messages = createMessages(
-            'warning',
-            null,
-            'You must be logged in to continue'
-          );
+        const flashMessage = req.flash('restricted')[0];
+        console.log(flashMessage);
+
+        if (flashMessage) {
+          res.locals.messages = createMessages('warning', null, flashMessage);
         }
 
         res.render('login');
