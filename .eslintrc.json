@@ -23,7 +23,7 @@
     "no-restricted-globals": "warn",
     "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
     "no-underscore-dangle": "off",
-    "no-unused-vars": "off",
+    "no-unused-vars": ["error", { "args": "none" }],
     "no-useless-escape": "off",
     "no-use-before-define": "off",
     "object-shorthand": "off",
