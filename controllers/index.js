@@ -7,6 +7,7 @@ const { createMessages, hasNoSpace, extractFlashMessages } = require('./utils');
 module.exports = {
   home: [
     extractFlashMessages('success'),
+    extractFlashMessages('error'),
     (req, res) => {
       res.render('index');
     },
@@ -48,14 +49,7 @@ module.exports = {
         const { username, password } = req.body;
 
         if (errors.isEmpty()) {
-          new User({ username, password }).save((err) => {
-            if (err) return next(err);
-
-            // BUG: Message not showing
-            // TODO: Link to a first-timers guide
-            req.flash('success', 'You successfully created your account!');
-            next();
-          });
+          new User({ username, password }).save(next);
         } else {
           res.render('signup', {
             messages: createMessages('danger', errors.array()),
@@ -63,9 +57,13 @@ module.exports = {
         }
       },
       passport.authenticate('local', {
-        successRedirect: '/',
         failureRedirect: '/',
+        failureFlash: true,
       }),
+      (req, res) => {
+        req.flash('success', 'You successfully created your account!');
+        res.redirect('/');
+      },
     ],
   },
   login: {
