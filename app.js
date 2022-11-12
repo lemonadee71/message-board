@@ -12,11 +12,14 @@ const app = express();
 // view engine setup
 app.set('view engine', 'njk');
 app.engine('njk', nunjucks.render);
-nunjucks.configure('views', {
+const env = nunjucks.configure('views', {
   express: app,
   autoescape: true,
   noCache: true,
 });
+
+const filters = require('./filters');
+env.addFilter('stringify', filters.stringify);
 
 app.use(logger('dev'));
 app.use(express.json());

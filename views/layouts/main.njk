@@ -1,4 +1,5 @@
 {% extends "layouts/base.njk" %}
+{% from "components/buttons.njk" import get_btn, post_btn %}
 
 {% block body %}
   {# Header #}
@@ -8,25 +9,10 @@
     </h1>
     <div class="space-x-3">
       {% if current_user %}
-        <form action="/logout" method="post">
-          <button
-            type="submit"
-            class="font-semibold text-white text-center rounded-lg px-4 py-2 bg-blue-600 border border-solid border-blue-600
-              focus:ring">
-            Logout
-          </button>
-        </form>
+        {{ post_btn('Logout', '/logout') }}
       {% else %}
-        <a
-          href="/signup"
-          class="font-semibold text-blue-600 text-center rounded-lg px-4 py-2 bg-white border border-solid border-blue-600
-            focus:ring">
-          Sign Up</a>
-        <a
-          href="/login"
-          class="font-semibold text-white text-center rounded-lg px-4 py-2 bg-blue-600 border border-solid border-blue-600
-            focus:ring">
-          Login</a>
+        {{ get_btn('Sign Up', '/signup') }}
+        {{ get_btn('Login', '/login') }}
       {% endif %}
     </div>
   </header>
