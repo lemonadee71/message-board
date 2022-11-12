@@ -7,10 +7,7 @@ const logger = require('morgan');
 const nunjucks = require('nunjucks');
 const flash = require('connect-flash');
 
-const { connectDB } = require('./db');
 const app = express();
-
-connectDB();
 
 // view engine setup
 app.set('view engine', 'njk');
