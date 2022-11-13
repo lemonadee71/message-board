@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const PostSchema = new Schema({
   author: { type: String, ref: 'User', required: true },
   board: { type: String, ref: 'Board', required: true },
-  subject: { type: String, required: true, maxLength: 150 },
+  title: { type: String, required: true, maxLength: 150 },
   body: { type: String, required: true, trim: true },
   // the board needs private set to false to toggle this
   // only creator and moderators can toggle it freely
@@ -15,7 +15,7 @@ const PostSchema = new Schema({
 });
 
 PostSchema.virtual('url').get(function () {
-  return `/p/${this._id}`;
+  return `/p/${this.id}`;
 });
 
 module.exports = mongoose.model('Post', PostSchema);

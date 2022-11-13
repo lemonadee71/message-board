@@ -14,7 +14,10 @@
         {{ board.display_name }}
       </h1>
       {% if is_current_user_member %}
-        {{ post_btn('Leave', board.url + '/leave') }}
+        <div class="flex space-x-3">
+          {{ get_btn('Post', board.url + '/post') }}
+          {{ post_btn('Leave', board.url + '/leave') }}
+        </div>
       {% else %}
         {{ get_btn('Join', board.url + '/join') }}
       {% endif %}

@@ -34,6 +34,7 @@ app.use(flash());
 
 app.use('/', require('./routes/index'));
 app.use('/b', require('./routes/board'));
+app.use('/p', require('./routes/post'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
