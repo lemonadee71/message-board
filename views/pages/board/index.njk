@@ -6,11 +6,36 @@
 {%- endmacro %}
 
 {% block main %}
-  <h1 class="font-semibold text-lg">{{ board.boardname }}</h1>
-  <pre>{{ board | dump(2) }}</pre>
-  {% if is_current_user_member %}
-    {{ post_btn('Leave', board.url + '/leave') }}
-  {% else %}
-    {{ get_btn('Join', board.url + '/join') }}
-  {% endif %}
+  {# Board header #}
+  <div class="h-20 grid grid-cols-[auto_1fr] grid-rows-2 px-28">
+    <img class="row-span-2 rounded-full h-14 w-14 mr-6 active:ring-teal-500 self-center" src="{{ board.boardname | avatar }}" alt="profile picture"/>
+    <div class="self-end flex flex-row justify-between">
+      <h1 class="font-bold tracking-wide text-3xl">
+        {{ board.display_name }}
+      </h1>
+      {% if is_current_user_member %}
+        {{ post_btn('Leave', board.url + '/leave') }}
+      {% else %}
+        {{ get_btn('Join', board.url + '/join') }}
+      {% endif %}
+    </div>
+    <p class="font-medium tracking-wide text-lg text-gray-600 self-start">{{ board.url }}</p>
+  </div>
+  {# Board body #}
+  <div class="bg-neutral-200 py-6">
+    <div class="container-auto grid grid-cols-[3fr_1fr] gap-6">
+      <div class="flex flex-col gap-4">
+        {% include "components/board/feed.njk" %}
+      </div>
+      <div class="flex flex-col gap-4">
+        <div class="shadow-sm rounded-md bg-white">
+          <div class="font-semibold p-3 text-white bg-blue-500 rounded-t-md">About Community</div>
+          <div class="p-3 space-y-3">
+            <p>{{ board.description if board.description else "This board doesn't have any information yet!" }}</p>
+            <p class="text-gray-500 text-sm">Created {{ board.date_created | formatdate }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

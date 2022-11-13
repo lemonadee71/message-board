@@ -1,3 +1,5 @@
+const format = require('date-fns/format');
+
 exports.stringify = (o, delimiter = ' ') =>
   Object.entries(o)
     .map(([key, value]) => {
@@ -8,3 +10,10 @@ exports.stringify = (o, delimiter = ' ') =>
       return `${key}=${value}`;
     })
     .join(delimiter);
+
+exports.createAvatar = (name) =>
+  `https://ui-avatars.com/api/?background=0D8ABC&color=fff&size=100&name=${encodeURI(
+    name
+  )}`;
+
+exports.formatDate = (date) => format(date, 'MMM d, y');

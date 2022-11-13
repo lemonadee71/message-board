@@ -20,6 +20,8 @@ const env = nunjucks.configure('views', {
 
 const filters = require('./filters');
 env.addFilter('stringify', filters.stringify);
+env.addFilter('avatar', filters.createAvatar);
+env.addFilter('formatdate', filters.formatDate);
 
 app.use(logger('dev'));
 app.use(express.json());
