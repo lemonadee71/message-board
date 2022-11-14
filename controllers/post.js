@@ -1,4 +1,5 @@
 const { body, param, validationResult } = require('express-validator');
+const escapeHtml = require('escape-html');
 const { isLoggedIn } = require('../middlewares/authentication');
 const Post = require('../models/post');
 const { createMessages } = require('./utils');
@@ -23,7 +24,7 @@ module.exports = {
         .withMessage(
           'Must be at least 1 character and no more than 150 characters'
         ),
-      body('body').trim().escape(),
+      body('body').trim().customSanitizer(escapeHtml),
       param('boardname').escape(),
       (req, res) => {
         const errors = validationResult(req);
@@ -52,6 +53,7 @@ module.exports = {
     get: [
       (req, res, next) => {
         Post.findById(req.params.postid)
+          .populate('board')
           .orFail(new Error('Post not found'))
           .then((post) => {
             res.render('pages/post/index', {

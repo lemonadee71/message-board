@@ -1,4 +1,7 @@
 const format = require('date-fns/format');
+const formatDistanceStrict = require('date-fns/formatDistanceStrict');
+const showdown = require('showdown');
+showdown.setFlavor('github');
 
 exports.stringify = (o, delimiter = ' ') =>
   Object.entries(o)
@@ -17,3 +20,24 @@ exports.createAvatar = (name) =>
   )}`;
 
 exports.formatDate = (date) => format(date, 'MMM d, y');
+
+exports.formatDistance = (date) => formatDistanceStrict(new Date(), date);
+
+exports.mdToHTML = (str) =>
+  new showdown.Converter({
+    omitExtraWLInCodeBlocks: true,
+    noHeaderId: true,
+    ghCompatibleHeaderId: true,
+    headerLevelStart: 2,
+    parseImgDimensions: true,
+    strikethrough: true,
+    tables: true,
+    ghCodeBlocks: true,
+    ghMentions: true,
+    tasklists: true,
+    smartIndentationFix: true,
+    simpleLineBreaks: true,
+    openLinksInNewWindow: true,
+    backslashEscapesHTMLTags: true,
+    emoji: true,
+  }).makeHtml(str);

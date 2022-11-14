@@ -22,6 +22,8 @@ const filters = require('./filters');
 env.addFilter('stringify', filters.stringify);
 env.addFilter('avatar', filters.createAvatar);
 env.addFilter('formatdate', filters.formatDate);
+env.addFilter('formatdistance', filters.formatDistance);
+env.addFilter('makehtml', filters.mdToHTML);
 
 app.use(logger('dev'));
 app.use(express.json());
