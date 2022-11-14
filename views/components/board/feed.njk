@@ -1,1 +1,14 @@
 <pre class="bg-white">{{ board | dump(2) }}</pre>
+{% for post in posts %}
+  <div class="bg-white rounded-md px-6 py-4 cursor-pointer" data-href="{{ post.url }}">
+    <p class="text-sm text-gray-500 mb-2">
+      Posted by
+      <a href="/u/{{ post.author }}">u/{{ post.author }}</a>
+      • {{ post.date_created | formatdistance }}
+    </p>
+    <div class="prose prose-sm line-clamp-6 max-w-none">
+      <h1>{{ post.title }}</h1>
+      {{ post.body | makehtml | safe }}
+    </div>
+  </div>
+{% endfor %}

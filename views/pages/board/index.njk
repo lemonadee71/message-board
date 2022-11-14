@@ -41,4 +41,8 @@
       </div>
     </div>
   </div>
+
+  <script>
+    Array.from(document.body.querySelectorAll('[data-href]')).map(e => e.addEventListener('click', () => window.location.assign(e.dataset.href)))
+  </script>
 {% endblock %}

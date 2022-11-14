@@ -1,6 +1,8 @@
+const async = require('async');
 const { body, param, validationResult } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
 const Board = require('../models/board');
+const Post = require('../models/post');
 const { hasNoSpace, createMessages, extractFlashMessages } = require('./utils');
 
 const boardNotFound = (err, req, res, next) => {
@@ -85,18 +87,30 @@ module.exports = {
       extractFlashMessages('info'),
       extractFlashMessages('success'),
       (req, res, next) => {
-        Board.findById(req.params.boardname)
-          .orFail(new Error('Board not found'))
-          .then((board) => {
-            const copy = board.toObject({ virtuals: true });
-            delete copy.passcode;
+        async.parallel(
+          {
+            board: (callback) =>
+              Board.findById(req.params.boardname)
+                .orFail(new Error('Board not found'))
+                .exec(callback),
+            posts: (callback) =>
+              Post.find({ board: req.params.boardname }).exec(callback),
+          },
+          (err, results) => {
+            if (err) return next(err);
 
             res.render('pages/board/index', {
-              board: copy,
-              is_current_user_member: isMember(req.user, board.boardname),
+              board: results.board.toObject({ virtuals: true }),
+              posts: results.posts.map((post) =>
+                post.toObject({ virtuals: true })
+              ),
+              is_current_user_member: isMember(
+                req.user,
+                results.board.boardname
+              ),
             });
-          })
-          .catch(next);
+          }
+        );
       },
       boardNotFound,
     ],
