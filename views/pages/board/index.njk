@@ -28,7 +28,23 @@
   <div class="bg-neutral-200 py-6">
     <div class="container-auto grid grid-cols-[3fr_1fr] gap-6">
       <div class="flex flex-col gap-4">
-        {% include "components/board/feed.njk" %}
+        {% if posts.length %}
+          {% for post in posts %}
+            <div class="bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500" data-href="{{ post.url }}">
+              <p class="text-sm text-gray-500 mb-2">
+                Posted by
+                <a href="/u/{{ post.author }}">u/{{ post.author }}</a>
+                • {{ post.date_created | formatdistance }}
+              </p>
+              <div class="prose prose-sm line-clamp-6 max-w-none">
+                <h1>{{ post.title }}</h1>
+                {{ post.body | makehtml | safe }}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="font-semibold text-center text-gray-700">This board doesn't have any posts yet</p>
+        {% endif %}
       </div>
       <div class="flex flex-col gap-4">
         <div class="shadow-sm rounded-md bg-white">
