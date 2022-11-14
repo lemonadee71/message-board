@@ -12,7 +12,10 @@
     {{ input('text', 'display_name', "Display name") }}
     {{ input('text', 'passcode') }}
     {{ input('textarea', 'description') }}
-    {{ input('checkbox', 'private', 'Private (posts will be hidden for non-members)', class='', attrs={ checked: true }) }}
+    <label class="block">
+      <input type="checkbox" name="private" checked/>
+      <span class="text-gray-700">Private (posts will be hidden for non-members)</span>
+    </label>
     {% endcall %}
   </main>
 {% endblock %}
