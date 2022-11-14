@@ -1,33 +1,41 @@
 {% extends "layouts/main.njk" %}
-{% from "components/buttons.njk" import get_btn %}
+{% from "components/buttons.njk" import get_btn, post_btn %}
 
 {% block main %}
   <div class="h-full bg-neutral-200">
     <div class="container-auto max-w-sm space-y-4">
-      <a
-        href="/b/{{ post.board.id }}"
-        class="inline-flex align-middle font-semibold text-center px-4 py-2 rounded-r-full rounded-l-full shadow-md bg-white
-          focus:ring">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="icon icon-tabler icon-tabler-arrow-left"
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="#2c3e50"
-          fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round">
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <line x1="5" y1="12" x2="11" y2="18"/>
-          <line x1="5" y1="12" x2="11" y2="6"/>
-        </svg>
-        <span class="text-lg text-neutral-800">
-          {{ post.board.url }}
-        </span>
-      </a>
+      <div class="flex flex-row justify-between">
+        <a
+          href="/b/{{ post.board.id }}"
+          class="inline-flex align-middle font-semibold text-center px-4 py-2 rounded-r-full rounded-l-full shadow-md bg-white
+            focus:ring">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon icon-tabler icon-tabler-arrow-left"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="#2c3e50"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <line x1="5" y1="12" x2="11" y2="18"/>
+            <line x1="5" y1="12" x2="11" y2="6"/>
+          </svg>
+          <span class="text-lg text-neutral-800">
+            {{ post.board.url }}
+          </span>
+        </a>
+        {% if current_user and current_user.id === post.author %}
+          <div class="flex gap-4">
+            {{ get_btn('Edit', post.url + '/edit') }}
+            {{ post_btn('Delete', post.url + '/delete', class='btn--danger') }}
+          </div>
+        {% endif %}
+      </div>
       <div class="bg-white rounded-md px-10 py-4">
         <p class="text-sm text-gray-500 mb-2">
           Posted by

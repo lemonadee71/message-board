@@ -1,4 +1,3 @@
-{% set title = "Create post" %}
 {% from "components/form_controls.njk" import form, input %}
 {% extends "layouts/base.njk" %}
 
@@ -7,9 +6,9 @@
     {% include "components/alert.njk" %}
   {% endif %}
   <main class="container-auto">
-    {% call form('Create Post', '/b/' + boardname + '/post') %}
-    {{ input('text', 'title', 'Title', required=true) }}
-    {{ input('textarea', 'body') }}
+    {% call form(title, action) %}
+    {{ input('text', 'title', 'Title', value=post.title, required=true) }}
+    {{ input('textarea', 'body', value=post.body) }}
     {% endcall %}
   </main>
 {% endblock %}

@@ -58,6 +58,7 @@ module.exports = {
       body('private').optional({ checkFalsy: true }).toBoolean(),
       (req, res) => {
         const errors = validationResult(req);
+        console.log(req.body);
 
         if (errors.isEmpty()) {
           new Board({
@@ -101,9 +102,7 @@ module.exports = {
 
             res.render('pages/board/index', {
               board: results.board.toObject({ virtuals: true }),
-              posts: results.posts.map((post) =>
-                post.toObject({ virtuals: true })
-              ),
+              posts: results.posts.map((post) => post.toSafeObject()),
               is_current_user_member: isMember(
                 req.user,
                 results.board.boardname
