@@ -7,7 +7,7 @@ const PostSchema = new Schema({
   author: { type: String, ref: 'User', required: true },
   board: { type: String, ref: 'Board', required: true },
   title: { type: String, required: true, maxLength: 150 },
-  body: { type: String, required: true, trim: true },
+  body: { type: String, trim: true },
   // the board needs private set to false to toggle this
   // only creator and moderators can toggle it freely
   private: { type: Boolean, default: true },
