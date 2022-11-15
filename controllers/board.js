@@ -1,5 +1,5 @@
 const async = require('async');
-const { body, param, validationResult } = require('express-validator');
+const { body, param } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
 const Board = require('../models/board');
 const Post = require('../models/post');
@@ -8,6 +8,7 @@ const {
   createMessages,
   extractFlashMessages,
   ifNotFound,
+  finishValidation,
 } = require('./utils');
 
 const isMember = (user, boardname) => user?.boards.includes(boardname);
@@ -65,10 +66,8 @@ module.exports = {
           )
         ),
       ...validateAndSanitizeBoardData,
-      (req, res) => {
-        const errors = validationResult(req);
-
-        if (errors.isEmpty()) {
+      finishValidation()
+        .ifSuccess((req, res) => {
           new Board({
             boardname: req.body.boardname,
             display_name: req.body.display_name || undefined,
@@ -82,14 +81,14 @@ module.exports = {
               req.user.boards.push(board.boardname);
               req.user.save().then(() => res.redirect(board.url));
             });
-        } else {
+        })
+        .ifHasError((errors, req, res) => {
           res.render('pages/board/create_form', {
             title: 'Create New Board',
             action: `/b/_/create`,
-            messages: createMessages('danger', errors.array()),
+            messages: errors,
           });
-        }
-      },
+        }),
     ],
   },
   page: {
@@ -151,10 +150,8 @@ module.exports = {
     post: [
       isLoggedIn,
       ...validateAndSanitizeBoardData,
-      async (req, res, next) => {
-        const errors = validationResult(req);
-
-        if (errors.isEmpty()) {
+      finishValidation()
+        .ifSuccess(async (req, res, next) => {
           try {
             const board = await Board.findById(req.params.boardname);
             Object.assign(board, {
@@ -169,16 +166,16 @@ module.exports = {
           } catch (err) {
             next(err);
           }
-        } else {
+        })
+        .ifHasError((errors, req, res) => {
           res.render('pages/board/create_form', {
             title: 'Update board',
             mode: 'edit',
             action: `/b/${req.params.boardname}/edit`,
             board: req.body,
-            messages: createMessages('danger', errors.array()),
+            messages: errors,
           });
-        }
-      },
+        }),
     ],
   },
   join: {
@@ -213,31 +210,28 @@ module.exports = {
         .withMessage('No spaces are allowed')
         .isAlphanumeric()
         .withMessage('Input has non-alphanumeric characters'),
-      (req, res, next) => {
-        Board.findByName(req.params.boardname)
-          .then(async (board) => {
-            const errors = validationResult(req);
-            res.locals.boardname = req.params.boardname;
-
-            if (errors.isEmpty()) {
+      finishValidation()
+        .ifSuccess((req, res, next) => {
+          Board.findByName(req.params.boardname)
+            .then(async (board) => {
               try {
                 await board.join(req.user, req.body.passcode);
                 req.flash('success', `You successfully joined ${board.url}`);
                 return res.redirect(board.url);
               } catch (err) {
-                res.locals.messages = createMessages('danger', {
-                  msg: err.message,
-                  param: 'passcode',
+                res.render('pages/board/join_form', {
+                  messages: createMessages('danger', {
+                    msg: err.message,
+                    param: 'passcode',
+                  }),
                 });
               }
-            } else {
-              res.locals.messages = createMessages('danger', errors.array());
-            }
-
-            res.render('pages/board/join_form');
-          })
-          .catch(next);
-      },
+            })
+            .catch(next);
+        })
+        .ifHasError((errors, req, res) => {
+          res.render('pages/board/join_form', { messages: errors });
+        }),
       ifNotFound('pages/board/not_found'),
     ],
   },

@@ -1,8 +1,13 @@
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
 const passport = require('passport');
 const { isAlreadyLoggedIn } = require('../middlewares/authentication');
 const User = require('../models/user');
-const { createMessages, hasNoSpace, extractFlashMessages } = require('./utils');
+const {
+  createMessages,
+  hasNoSpace,
+  extractFlashMessages,
+  finishValidation,
+} = require('./utils');
 
 module.exports = {
   home: [
@@ -44,18 +49,14 @@ module.exports = {
         .withMessage('No spaces are allowed')
         .isStrongPassword()
         .withMessage('Password must be a strong password'),
-      (req, res, next) => {
-        const errors = validationResult(req);
-        const { username, password } = req.body;
-
-        if (errors.isEmpty()) {
+      finishValidation()
+        .ifSuccess((req, res, next) => {
+          const { username, password } = req.body;
           new User({ username, password }).save(next);
-        } else {
-          res.render('signup', {
-            messages: createMessages('danger', errors.array()),
-          });
-        }
-      },
+        })
+        .ifHasError((errors, req, res) =>
+          res.render('signup', { messages: errors })
+        ),
       passport.authenticate('local', {
         failureRedirect: '/',
         failureFlash: true,

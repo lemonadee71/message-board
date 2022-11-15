@@ -1,7 +1,11 @@
-const { body, param, validationResult } = require('express-validator');
+const { body, param } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
 const Post = require('../models/post');
-const { createMessages, extractFlashMessages, ifNotFound } = require('./utils');
+const {
+  extractFlashMessages,
+  ifNotFound,
+  finishValidation,
+} = require('./utils');
 
 module.exports = {
   create: {
@@ -26,10 +30,8 @@ module.exports = {
         ),
       body('body').trim(),
       param('boardname').escape(),
-      (req, res) => {
-        const errors = validationResult(req);
-
-        if (errors.isEmpty()) {
+      finishValidation()
+        .ifSuccess((req, res) => {
           new Post({
             author: req.user.username,
             board: req.params.boardname,
@@ -40,14 +42,14 @@ module.exports = {
             .then((post) => {
               res.redirect(post.url);
             });
-        } else {
+        })
+        .ifHasError((errors, req, res) => {
           res.render('pages/board/create_post_form', {
             title: 'Create post',
             action: `/b/${req.params.boardname}/post`,
-            messages: createMessages('danger', errors.array()),
+            messages: errors,
           });
-        }
-      },
+        }),
     ],
   },
   edit: {
@@ -81,10 +83,8 @@ module.exports = {
           'Must be at least 1 character and no more than 150 characters'
         ),
       body('body').trim(),
-      async (req, res, next) => {
-        const errors = validationResult(req);
-
-        if (errors.isEmpty()) {
+      finishValidation()
+        .ifSuccess(async (req, res, next) => {
           try {
             const post = await Post.findByObjId(req.params.postid);
             post.title = req.body.title;
@@ -96,15 +96,15 @@ module.exports = {
           } catch (err) {
             next(err);
           }
-        } else {
+        })
+        .ifHasError((errors, req, res) => {
           res.render('pages/board/create_post_form', {
             title: 'Update post',
             action: `/p/${req.params.postid}/edit`,
             post: { ...req.body, url: `/p/${req.params.postid}` },
-            messages: createMessages('danger', errors.array()),
+            messages: errors,
           });
-        }
-      },
+        }),
       ifNotFound('pages/post/not_found'),
     ],
   },

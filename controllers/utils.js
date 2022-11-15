@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const { NotFoundError } = require('../utils');
 
 const ALERT_COLORS = {
@@ -75,9 +76,41 @@ const ifNotFound = (view) => (err, req, res, next) => {
 
 const hasNoSpace = (value) => !/\s/.test(value);
 
+const finishValidation = (fn) => {
+  let fnIfSuccess = (req, res, next) => next();
+  if (fn) fnIfSuccess = fn;
+  let fnIfHasError = (_, req, res, next) => next();
+
+  async function cb(req, res, next) {
+    const errors = validationResult(req);
+    if (errors.isEmpty()) {
+      await fnIfSuccess?.(req, res, next);
+    } else {
+      await fnIfHasError?.(
+        createMessages('danger', errors.array()),
+        req,
+        res,
+        next
+      );
+    }
+  }
+
+  cb.ifSuccess = (f) => {
+    fnIfSuccess = f;
+    return cb;
+  };
+  cb.ifHasError = (f) => {
+    fnIfHasError = f;
+    return cb;
+  };
+
+  return cb;
+};
+
 module.exports = {
   createMessages,
   extractFlashMessages,
   hasNoSpace,
   ifNotFound,
+  finishValidation,
 };
