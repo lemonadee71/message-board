@@ -15,9 +15,38 @@ const boardNotFound = (err, req, res, next) => {
 
 const isMember = (user, boardname) => user?.boards.includes(boardname);
 
+const validateAndSanitizeBoardData = [
+  body('display_name')
+    .optional({ checkFalsy: true })
+    .trim()
+    .escape()
+    .isLength({ min: 2, max: 50 })
+    .withMessage(
+      'Must be at least 2 characters and no more than 50 characters'
+    ),
+  body('passcode')
+    .optional({ checkFalsy: true })
+    .trim()
+    .escape()
+    .custom(hasNoSpace)
+    .withMessage('No spaces are allowed')
+    .isAlphanumeric()
+    .withMessage('Input has non-alphanumeric characters'),
+  body('description').optional({ checkFalsy: true }).trim(),
+  body('private').optional({ checkFalsy: true }).toBoolean(),
+];
+
 module.exports = {
   create: {
-    get: [isLoggedIn, (req, res) => res.render('pages/board/create_form')],
+    get: [
+      isLoggedIn,
+      (req, res) => {
+        res.render('pages/board/create_form', {
+          title: 'Create New Board',
+          action: `/b/_/create`,
+        });
+      },
+    ],
     post: [
       isLoggedIn,
       body('boardname')
@@ -38,27 +67,9 @@ module.exports = {
               res && Promise.reject(new Error(`Board name is already taken`))
           )
         ),
-      body('display_name')
-        .optional({ checkFalsy: true })
-        .trim()
-        .escape()
-        .isLength({ min: 2, max: 50 })
-        .withMessage(
-          'Must be at least 2 characters and no more than 50 characters'
-        ),
-      body('passcode')
-        .optional({ checkFalsy: true })
-        .trim()
-        .escape()
-        .custom(hasNoSpace)
-        .withMessage('No spaces are allowed')
-        .isAlphanumeric()
-        .withMessage('Input has non-alphanumeric characters'),
-      body('description').optional({ checkFalsy: true }).trim().escape(),
-      body('private').optional({ checkFalsy: true }).toBoolean(),
+      ...validateAndSanitizeBoardData,
       (req, res) => {
         const errors = validationResult(req);
-        console.log(req.body);
 
         if (errors.isEmpty()) {
           new Board({
@@ -71,11 +82,13 @@ module.exports = {
           })
             .save()
             .then((board) => {
-              req.user.boards = [...req.user.boards, board.boardname];
+              req.user.boards.push(board.boardname);
               req.user.save().then(() => res.redirect(board.url));
             });
         } else {
           res.render('pages/board/create_form', {
+            title: 'Create New Board',
+            action: `/b/_/create`,
             messages: createMessages('danger', errors.array()),
           });
         }
@@ -87,6 +100,7 @@ module.exports = {
       param('boardname').escape(),
       extractFlashMessages('info'),
       extractFlashMessages('success'),
+      extractFlashMessages('error'),
       (req, res, next) => {
         async.parallel(
           {
@@ -101,7 +115,7 @@ module.exports = {
             if (err) return next(err);
 
             res.render('pages/board/index', {
-              board: results.board.toObject({ virtuals: true }),
+              board: results.board.toSafeObject(),
               posts: results.posts.map((post) => post.toSafeObject()),
               is_current_user_member: isMember(
                 req.user,
@@ -112,6 +126,65 @@ module.exports = {
         );
       },
       boardNotFound,
+    ],
+  },
+  edit: {
+    get: [
+      isLoggedIn,
+      (req, res, next) => {
+        Board.findById(req.params.boardname)
+          .orFail(new Error('Board not found'))
+          .then((board) => {
+            if (req.user.id === board.creator) {
+              res.render('pages/board/create_form', {
+                title: 'Update board',
+                mode: 'edit',
+                action: `${board.url}/edit`,
+                board: board.toObject({ virtuals: true }),
+              });
+            } else {
+              req.flash(
+                'error',
+                'Invalid action. Only the creator of this board can edit it.'
+              );
+              res.redirect(board.url);
+            }
+          })
+          .catch(next);
+      },
+      boardNotFound,
+    ],
+    post: [
+      isLoggedIn,
+      ...validateAndSanitizeBoardData,
+      async (req, res, next) => {
+        const errors = validationResult(req);
+
+        if (errors.isEmpty()) {
+          try {
+            const board = await Board.findById(req.params.boardname);
+            Object.assign(board, {
+              display_name: req.body.display_name || undefined,
+              passcode: req.body.passcode || undefined,
+              description: req.body.description,
+              private: req.body.private,
+            });
+            await board.save();
+
+            res.redirect(board.url);
+          } catch (err) {
+            next(err);
+          }
+        } else {
+          res.render('pages/board/create_form', {
+            title: 'Update board',
+            mode: 'edit',
+            action: `/b/${req.params.boardname}/edit`,
+            board: req.body,
+            messages: createMessages('danger', errors.array()),
+          });
+        }
+      },
     ],
   },
   join: {

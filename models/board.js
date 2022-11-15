@@ -1,3 +1,4 @@
+const escapeHtml = require('escape-html');
 const mongoose = require('mongoose');
 const { Timestamp } = require('./utils');
 
@@ -16,8 +17,7 @@ const BoardSchema = new Schema({
       return this.boardname;
     },
   },
-  description: String,
-  // TODO: allow custom passcodes
+  description: { type: String, get: escapeHtml },
   passcode: {
     type: String,
     default: () => Math.random().toString(36).slice(2, 8),
@@ -31,6 +31,10 @@ const BoardSchema = new Schema({
 BoardSchema.virtual('url').get(function () {
   return `/b/${this.boardname}`;
 });
+
+BoardSchema.methods.toSafeObject = function () {
+  return this.toObject({ getters: true, virtuals: true });
+};
 
 BoardSchema.methods.join = function (user, passcode) {
   if (passcode === this.passcode) {
