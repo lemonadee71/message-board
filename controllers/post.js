@@ -119,7 +119,7 @@ module.exports = {
   page: {
     get: [
       extractFlashMessages('success'),
-      extractFlashMessages('error', 'danger'),
+      extractFlashMessages('error'),
       (req, res, next) => {
         Post.findByObjId(req.params.postid)
           .populate('board')

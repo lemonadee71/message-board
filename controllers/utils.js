@@ -51,7 +51,7 @@ const createMessages = (type, items, header) => ({
       }
       return copy;
     }),
-  colors: ALERT_COLORS[type],
+  colors: ALERT_COLORS[type === 'error' ? 'danger' : type],
 });
 
 const extractFlashMessages = (key, type) => (req, res, next) => {
@@ -87,7 +87,7 @@ const finishValidation = (fn) => {
       await fnIfSuccess?.(req, res, next);
     } else {
       await fnIfHasError?.(
-        createMessages('danger', errors.array()),
+        createMessages('error', errors.array()),
         req,
         res,
         next

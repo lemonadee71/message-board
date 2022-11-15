@@ -220,7 +220,7 @@ module.exports = {
                 return res.redirect(board.url);
               } catch (err) {
                 res.render('pages/board/join_form', {
-                  messages: createMessages('danger', {
+                  messages: createMessages('error', {
                     msg: err.message,
                     param: 'passcode',
                   }),

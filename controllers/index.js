@@ -70,7 +70,7 @@ module.exports = {
   login: {
     get: [
       isAlreadyLoggedIn,
-      extractFlashMessages('restricted', 'warning'),
+      extractFlashMessages('warning'),
       (req, res) => res.render('login'),
     ],
     post: [
@@ -80,7 +80,7 @@ module.exports = {
         passport.authenticate('local', (err, user) => {
           if (err) {
             return res.render('login', {
-              messages: createMessages('danger', null, err.message),
+              messages: createMessages('error', null, err.message),
             });
           }
 

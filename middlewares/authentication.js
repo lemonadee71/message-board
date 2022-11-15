@@ -10,7 +10,7 @@ const isLoggedIn = (req, res, next) => {
   if (req.user && req.isAuthenticated()) {
     next();
   } else {
-    req.flash('restricted', 'You must be logged in to continue');
+    req.flash('warning', 'You must be logged in to continue');
     res.redirect('/login');
   }
 };
