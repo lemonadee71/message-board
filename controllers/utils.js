@@ -1,3 +1,5 @@
+const { NotFoundError } = require('../utils');
+
 const ALERT_COLORS = {
   primary: {
     background: '#cfe2ff',
@@ -63,6 +65,19 @@ const extractFlashMessages = (key, type) => (req, res, next) => {
   next();
 };
 
+const ifNotFound = (view) => (err, req, res, next) => {
+  if (err instanceof NotFoundError) {
+    return res.render(view);
+  }
+
+  next(err);
+};
+
 const hasNoSpace = (value) => !/\s/.test(value);
 
-module.exports = { createMessages, extractFlashMessages, hasNoSpace };
+module.exports = {
+  createMessages,
+  extractFlashMessages,
+  hasNoSpace,
+  ifNotFound,
+};

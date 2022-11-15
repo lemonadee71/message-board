@@ -1,15 +1,7 @@
 const { body, param, validationResult } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
 const Post = require('../models/post');
-const { createMessages, extractFlashMessages } = require('./utils');
-
-const postNotFound = (err, req, res, next) => {
-  if (err.message === 'Post not found') {
-    return res.render('pages/post/not_found');
-  }
-
-  next(err);
-};
+const { createMessages, extractFlashMessages, ifNotFound } = require('./utils');
 
 module.exports = {
   create: {
@@ -62,8 +54,7 @@ module.exports = {
     get: [
       isLoggedIn,
       (req, res, next) => {
-        Post.findById(req.params.postid)
-          .orFail(new Error('Post not found'))
+        Post.findByObjId(req.params.postid)
           .then((post) => {
             if (req.user.id === post.author) {
               res.render('pages/board/create_post_form', {
@@ -95,9 +86,7 @@ module.exports = {
 
         if (errors.isEmpty()) {
           try {
-            const post = await Post.findById(req.params.postid).orFail(
-              new Error('Post not found')
-            );
+            const post = await Post.findByObjId(req.params.postid);
             post.title = req.body.title;
             post.body = req.body.body;
             await post.save();
@@ -116,7 +105,7 @@ module.exports = {
           });
         }
       },
-      postNotFound,
+      ifNotFound('pages/post/not_found'),
     ],
   },
   delete: [
@@ -132,9 +121,8 @@ module.exports = {
       extractFlashMessages('success'),
       extractFlashMessages('error', 'danger'),
       (req, res, next) => {
-        Post.findById(req.params.postid)
+        Post.findByObjId(req.params.postid)
           .populate('board')
-          .orFail(new Error('Post not found'))
           .then((post) => {
             res.render('pages/post/index', {
               post: post.toSafeObject(),
@@ -142,7 +130,7 @@ module.exports = {
           })
           .catch(next);
       },
-      postNotFound,
+      ifNotFound('pages/post/not_found'),
     ],
   },
 };

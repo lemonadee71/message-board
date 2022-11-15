@@ -1,5 +1,6 @@
 const escapeHtml = require('escape-html');
 const mongoose = require('mongoose');
+const { NotFoundError } = require('../utils');
 const { Timestamp } = require('./utils');
 
 const Schema = mongoose.Schema;
@@ -17,6 +18,10 @@ const PostSchema = new Schema({
 
 PostSchema.methods.toSafeObject = function () {
   return this.toObject({ getters: true, virtuals: true });
+};
+
+PostSchema.statics.findByObjId = function (id) {
+  return this.findById(id).orFail(new NotFoundError('Post not found'));
 };
 
 PostSchema.virtual('url').get(function () {

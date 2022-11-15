@@ -3,15 +3,12 @@ const { body, param, validationResult } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
 const Board = require('../models/board');
 const Post = require('../models/post');
-const { hasNoSpace, createMessages, extractFlashMessages } = require('./utils');
-
-const boardNotFound = (err, req, res, next) => {
-  if (err.message === 'Board not found') {
-    return res.render('pages/board/not_found');
-  }
-
-  next(err);
-};
+const {
+  hasNoSpace,
+  createMessages,
+  extractFlashMessages,
+  ifNotFound,
+} = require('./utils');
 
 const isMember = (user, boardname) => user?.boards.includes(boardname);
 
@@ -105,9 +102,7 @@ module.exports = {
         async.parallel(
           {
             board: (callback) =>
-              Board.findById(req.params.boardname)
-                .orFail(new Error('Board not found'))
-                .exec(callback),
+              Board.findByName(req.params.boardname).exec(callback),
             posts: (callback) =>
               Post.find({ board: req.params.boardname }).exec(callback),
           },
@@ -125,15 +120,14 @@ module.exports = {
           }
         );
       },
-      boardNotFound,
+      ifNotFound('pages/board/not_found'),
     ],
   },
   edit: {
     get: [
       isLoggedIn,
       (req, res, next) => {
-        Board.findById(req.params.boardname)
-          .orFail(new Error('Board not found'))
+        Board.findByName(req.params.boardname)
           .then((board) => {
             if (req.user.id === board.creator) {
               res.render('pages/board/create_form', {
@@ -152,7 +146,7 @@ module.exports = {
           })
           .catch(next);
       },
-      boardNotFound,
+      ifNotFound('pages/board/not_found'),
     ],
     post: [
       isLoggedIn,
@@ -220,8 +214,7 @@ module.exports = {
         .isAlphanumeric()
         .withMessage('Input has non-alphanumeric characters'),
       (req, res, next) => {
-        Board.findById(req.params.boardname)
-          .orFail(new Error('Board not found'))
+        Board.findByName(req.params.boardname)
           .then(async (board) => {
             const errors = validationResult(req);
             res.locals.boardname = req.params.boardname;
@@ -245,7 +238,7 @@ module.exports = {
           })
           .catch(next);
       },
-      boardNotFound,
+      ifNotFound('pages/board/not_found'),
     ],
   },
   leave: {

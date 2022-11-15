@@ -1,5 +1,6 @@
 const escapeHtml = require('escape-html');
 const mongoose = require('mongoose');
+const { NotFoundError } = require('../utils');
 const { Timestamp } = require('./utils');
 
 const Schema = mongoose.Schema;
@@ -43,6 +44,10 @@ BoardSchema.methods.join = function (user, passcode) {
   }
 
   throw new Error('Wrong passcode');
+};
+
+BoardSchema.statics.findByName = function (boardname) {
+  return this.findById(boardname).orFail(new NotFoundError('Board not found'));
 };
 
 module.exports = mongoose.model('Board', BoardSchema);
