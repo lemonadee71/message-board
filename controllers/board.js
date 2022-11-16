@@ -73,7 +73,7 @@ module.exports = {
             display_name: req.body.display_name || undefined,
             passcode: req.body.passcode || undefined,
             description: req.body.description,
-            private: req.body.private,
+            private: !!req.body.private,
             creator: req.user.username,
           })
             .save()
@@ -158,7 +158,7 @@ module.exports = {
               display_name: req.body.display_name || undefined,
               passcode: req.body.passcode || undefined,
               description: req.body.description,
-              private: req.body.private,
+              private: !!req.body.private,
             });
             await board.save();
 
