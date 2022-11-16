@@ -1,5 +1,6 @@
 const { body, param } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
+const Board = require('../models/board');
 const Post = require('../models/post');
 const {
   extractFlashMessages,
@@ -12,11 +13,16 @@ module.exports = {
     get: [
       isLoggedIn,
       param('boardname').escape(),
-      (req, res) => {
-        res.render('pages/board/create_post_form', {
-          title: 'Create post',
-          action: `/b/${req.params.boardname}/post`,
-        });
+      (req, res, next) => {
+        Board.findByName(req.params.boardname)
+          .then((board) => {
+            res.render('pages/board/create_post_form', {
+              title: 'Create post',
+              action: `${board.url}/post`,
+              board,
+            });
+          })
+          .catch(next);
       },
     ],
     post: [
@@ -29,26 +35,33 @@ module.exports = {
           'Must be at least 1 character and no more than 150 characters'
         ),
       body('body').trim(),
+      body('private').optional({ checkFalsy: true }).toBoolean(),
       param('boardname').escape(),
       finishValidation()
-        .ifSuccess((req, res) => {
-          new Post({
+        .ifSuccess(async (req, res) => {
+          const board = await Board.findByName(req.params.boardname);
+          const post = new Post({
             author: req.user.username,
-            board: req.params.boardname,
+            board: board.boardname,
             title: req.body.title,
             body: req.body.body,
-          })
-            .save()
-            .then((post) => {
-              res.redirect(post.url);
-            });
-        })
-        .ifHasError((errors, req, res) => {
-          res.render('pages/board/create_post_form', {
-            title: 'Create post',
-            action: `/b/${req.params.boardname}/post`,
-            messages: errors,
+            private: board.private ? true : !!req.body.private,
           });
+          await post.save();
+
+          res.redirect(post.url);
+        })
+        .ifHasError((errors, req, res, next) => {
+          Board.findByName(req.params.boardname)
+            .then((board) => {
+              res.render('pages/board/create_post_form', {
+                title: 'Create post',
+                action: `${board.url}/post`,
+                board,
+                messages: errors,
+              });
+            })
+            .catch(next);
         }),
     ],
   },
@@ -57,6 +70,7 @@ module.exports = {
       isLoggedIn,
       (req, res, next) => {
         Post.findByObjId(req.params.postid)
+          .populate('board')
           .then((post) => {
             if (req.user.id === post.author) {
               res.render('pages/board/create_post_form', {
@@ -64,6 +78,7 @@ module.exports = {
                 action: `${post.url}/edit`,
                 // do not escape to show original input
                 post: post.toObject({ virtuals: true }),
+                board: post.board,
               });
             } else {
               req.flash('error', 'Invalid action');
@@ -83,12 +98,18 @@ module.exports = {
           'Must be at least 1 character and no more than 150 characters'
         ),
       body('body').trim(),
+      body('private').optional({ checkFalsy: true }).toBoolean(),
       finishValidation()
         .ifSuccess(async (req, res, next) => {
           try {
-            const post = await Post.findByObjId(req.params.postid);
-            post.title = req.body.title;
-            post.body = req.body.body;
+            const post = await Post.findByObjId(req.params.postid).populate(
+              'board'
+            );
+            Object.assign(post, {
+              title: req.body.title,
+              body: req.body.body,
+              private: post.board.private ? true : !!req.body.private,
+            });
             await post.save();
 
             req.flash('success', 'Post updated');
