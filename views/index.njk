@@ -1,9 +1,2 @@
 {% set title = "Home" %}
-{% extends "layouts/main.njk" %}
-
-{% block main %}
-  <h1 class="font-mono font-semibold">
-    Hello, {{ current_user.display_name if current_user else "world" }}!
-  </h1>
-  <pre>{{ current_user | dump(2) }}</pre>
-{% endblock %}
+{% extends "layouts/feed.njk" %}

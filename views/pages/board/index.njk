@@ -1,12 +1,11 @@
-{% extends "layouts/main.njk" %}
+{% extends "layouts/feed.njk" %}
 {% from "components/buttons.njk" import get_btn, post_btn %}
 
 {% macro is_member() -%}
   {{ ("leave" if is_current_user_member else "join") }}
 {%- endmacro %}
 
-{% block main %}
-  {# Board header #}
+{% block subheader %}
   <div class="h-20 grid grid-cols-[auto_1fr] grid-rows-2 px-28">
     <img class="row-span-2 rounded-full h-14 w-14 mr-6 active:ring-teal-500 self-center" src="{{ board.boardname | avatar }}" alt="profile picture"/>
     <div class="self-end flex flex-row justify-between">
@@ -27,50 +26,19 @@
     </div>
     <p class="font-medium tracking-wide text-lg text-gray-600 self-start">{{ board.url }}</p>
   </div>
+{% endblock %}
 
-  {# Board body #}
-  <div class="bg-neutral-200 py-6">
-    <div
-      class="container-auto grid grid-cols-[3fr_1fr] gap-6">
+{% block left_column %}
+  <pre>{{ board | dump(2) }}</pre>
+  {{ super() }}
+{% endblock %}
 
-      {# Feed #}
-      <div class="flex flex-col gap-4">
-        <pre>{{ board | dump(2) }}</pre>
-
-        {% if posts.length %}
-          {% for post in posts %}
-            <div class="bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500" data-href="{{ post.url }}">
-              <p class="text-sm text-gray-500 mb-2">
-                Posted by
-                <a href="/u/{{ post.author }}">u/{{ post.author }}</a>
-                • {{ post.date_created | formatdistance }}
-              </p>
-              <div class="prose prose-sm line-clamp-6 max-w-none">
-                <h1>{{ post.title }}</h1>
-                {{ post.body | makehtml | safe }}
-              </div>
-            </div>
-          {% endfor %}
-        {% else %}
-          <p class="font-semibold text-center text-gray-700">This board doesn't have any posts yet</p>
-        {% endif %}
-      </div>
-
-      {# Misc info #}
-      <div class="flex flex-col gap-4">
-        <div class="shadow-sm rounded-md bg-white">
-          <div class="font-semibold p-3 text-white bg-blue-500 rounded-t-md">About Community</div>
-          <div class="p-3 space-y-3 prose prose-sm">
-            <p class="break-all">{{ board.description | makehtml | safe if board.description else "This board doesn't have any information yet!" }}</p>
-            <p class="text-gray-500 text-sm">Created {{ board.date_created | formatdate }}</p>
-          </div>
-        </div>
-      </div>
-
+{% block right_column %}
+  <div class="shadow-sm rounded-md bg-white">
+    <h2 class="font-semibold p-3 text-white bg-blue-500 rounded-t-md">About Community</h2>
+    <div class="p-3 space-y-3 prose prose-sm">
+      <p class="">{{ board.description | makehtml | safe if board.description else "This board doesn't have any information yet!" }}</p>
+      <p class="text-gray-500 text-sm">Created {{ board.date_created | formatdate }}</p>
     </div>
   </div>
-
-  <script>
-    Array.from(document.body.querySelectorAll('[data-href]')).map(e => e.addEventListener('click', () => window.location.assign(e.dataset.href)))
-  </script>
 {% endblock %}

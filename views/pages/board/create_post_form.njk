@@ -9,6 +9,10 @@
     {% call form(title, action) %}
     {{ input('text', 'title', 'Title', value=post.title, required=true) }}
     {{ input('textarea', 'body', value=post.body) }}
-    {% endcall %}
+    <label class="block">
+      <input type="checkbox" name="private" {{ "disabled" if board.private }} {{ "checked" if board.private else (("checked" if post.private) if post else "checked") }}/>
+      <span class="text-gray-700">Private (posts will be hidden for non-members)</span>
+    </label>
+    {% endcall %} <pre> {{ post | dump(2) }}</pre>
   </main>
 {% endblock %}

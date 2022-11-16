@@ -1,6 +1,7 @@
 const { body } = require('express-validator');
 const passport = require('passport');
 const { isAlreadyLoggedIn } = require('../middlewares/authentication');
+const Post = require('../models/post');
 const User = require('../models/user');
 const {
   createMessages,
@@ -13,8 +14,12 @@ module.exports = {
   home: [
     extractFlashMessages('success'),
     extractFlashMessages('error'),
-    (req, res) => {
-      res.render('index');
+    (req, res, next) => {
+      Post.find({ private: false })
+        .then((posts) => {
+          res.render('index', { posts });
+        })
+        .catch(next);
     },
   ],
   signup: {
