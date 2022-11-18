@@ -1,15 +1,11 @@
 {% set title = "Login" %}
-{% from "components/form_controls.njk" import form, input %}
-{% extends "layouts/base.njk" %}
+{% from "components/form_controls.njk" import input %}
+{% extends "layouts/form.njk" %}
 
-{% block body %}
-  {% if messages %}
-    {% include "components/alert.njk" %}
-  {% endif %}
-  <main class="container-auto">
-    {% call form(title, '/login') %}
-    {{ input('text', 'username', required=true, show_required=false) }}
-    {{ input('password', 'password', required=true, show_required=false) }}
-    {% endcall %}
-  </main>
+{% set form_title = title %}
+{% set form_action = "/login" %}
+
+{% block form %}
+  {{ input('text', 'username', required=true, show_required=false) }}
+  {{ input('password', 'password', required=true, show_required=false) }}
 {% endblock %}

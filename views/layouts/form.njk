@@ -1,0 +1,13 @@
+{% from "components/form_controls.njk" import form %}
+{% extends "layouts/base.njk" %}
+
+{% block body %}
+  {% if messages %}
+    {% include "components/alert.njk" %}
+  {% endif %}
+  <main class="container-auto">
+    {% call form(form_title, form_action) %}
+    {% block form %}{% endblock %}
+    {% endcall %}
+  </main>
+{% endblock %}
