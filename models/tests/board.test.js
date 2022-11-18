@@ -6,7 +6,7 @@ const User = require('../user');
 let db, user;
 beforeAll(async () => {
   db = await connectDB();
-  user = new User({ username: 'Lemon', password: '123' });
+  user = new User({ username: 'testuser', password: '123' });
   await user.save();
 });
 
@@ -16,7 +16,7 @@ afterAll((done) => {
 });
 
 it("Updates user's boards when it joins a board", async () => {
-  const board = new Board({ boardname: 'test', creator: 'shin' });
+  const board = new Board({ boardname: 'testboard', creator: user.username });
   await board.save();
 
   await board.join(user, board.passcode);

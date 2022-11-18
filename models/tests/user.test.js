@@ -5,7 +5,7 @@ const User = require('../user');
 let db, user;
 beforeAll(async () => {
   db = await connectDB();
-  user = new User({ username: 'Lemon', password: '123' });
+  user = new User({ username: 'testuser', password: '123' });
   await user.save();
 });
 
