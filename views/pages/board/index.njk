@@ -1,5 +1,6 @@
 {% extends "layouts/feed.njk" %}
 {% from "components/buttons.njk" import get_btn, post_btn %}
+{% from "components/card.njk" import card %}
 
 {% macro is_member() -%}
   {{ ("leave" if is_current_user_member else "join") }}
@@ -34,15 +35,12 @@
 {% endblock %}
 
 {% block right_column %}
-  <div class="shadow-sm rounded-md bg-white">
-    <h2 class="font-semibold p-3 text-white bg-blue-500 rounded-t-md">About Community</h2>
-    <div class="p-3 space-y-3">
-      {% if board.description %}
-        <div class="prose prose-sm">{{ board.description | makehtml | safe }}</div>
-      {% else %}
-        <p>This board doesn't have any information yet!</p>
-      {% endif %}
-      <p class="text-gray-500 text-sm">Created {{ board.date_created | formatdate }}</p>
-    </div>
-  </div>
+  {% call card('About Community') %}
+  {% if board.description %}
+    <div class="prose prose-sm">{{ board.description | makehtml | safe }}</div>
+  {% else %}
+    <p>This board doesn't have any information yet!</p>
+  {% endif %}
+  <p class="text-gray-500 text-sm">Created {{ board.date_created | formatdate }}</p>
+  {% endcall %}
 {% endblock %}

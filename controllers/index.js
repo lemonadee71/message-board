@@ -1,6 +1,8 @@
+const async = require('async');
 const { body } = require('express-validator');
 const passport = require('passport');
 const { isAlreadyLoggedIn } = require('../middlewares/authentication');
+const Board = require('../models/board');
 const Post = require('../models/post');
 const User = require('../models/user');
 const {
@@ -15,11 +17,17 @@ module.exports = {
     extractFlashMessages('success'),
     extractFlashMessages('error'),
     (req, res, next) => {
-      Post.find({ private: false })
-        .then((posts) => {
-          res.render('index', { posts });
-        })
-        .catch(next);
+      async.parallel(
+        {
+          boards: (callback) => Board.find().exec(callback),
+          posts: (callback) => Post.find({ private: false }).exec(callback),
+        },
+        (err, results) => {
+          if (err) return next(err);
+
+          res.render('index', results);
+        }
+      );
     },
   ],
   signup: {

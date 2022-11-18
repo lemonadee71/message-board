@@ -1,3 +1,16 @@
 {% set title = "Home" %}
 {% set is_main_feed = true %}
+{% from "components/card.njk" import card %}
 {% extends "layouts/feed.njk" %}
+
+{% block right_column %}
+  {% call card('Boards') %}
+  <ul class="list-disc ml-3">
+    {% for board in boards %}
+      <li>
+        <a href="{{ board.url }}">{{ board.display_name }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+  {% endcall %}
+{% endblock %}
