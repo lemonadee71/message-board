@@ -76,12 +76,17 @@ module.exports = {
     get: [
       isAlreadyLoggedIn,
       extractFlashMessages('warning'),
-      (req, res) => res.render('login'),
+      (req, res) => {
+        req.flash('context.referer', req.get('referer'));
+        res.render('login');
+      },
     ],
     post: [
       body('username').trim().escape(),
       body('password').trim(),
       (req, res, next) => {
+        req.fromPath = req.flash('context.referer')[0];
+
         passport.authenticate('local', (err, user) => {
           if (err) {
             return res.render('login', {
@@ -95,7 +100,7 @@ module.exports = {
         })(req, res, next);
       },
       (req, res) => {
-        res.redirect('/');
+        res.redirect(new URL(req.fromPath).pathname);
       },
     ],
   },
