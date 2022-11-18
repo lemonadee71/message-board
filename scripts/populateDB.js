@@ -21,7 +21,7 @@ module.exports = async () => {
   ]);
 
   await Board.create([
-    { boardname: 'test', creator: 'lemon', passcode: 'test', private: false },
+    { boardname: 'test', creator: 'user', passcode: 'test', private: false },
     {
       boardname: 'top',
       display_name: 'The Odin Project',
