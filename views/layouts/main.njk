@@ -3,7 +3,7 @@
 
 {% block body %}
   {# Header #}
-  <header class="flex flex-row justify-between content-center px-8 pt-6 pb-4 mb-6 shadow-md">
+  <header class="flex flex-row justify-between content-center px-8 pt-6 pb-4 shadow-sm border border-solid border-b-gray-200">
     <h1 class="font-bold text-xl align-middle">
       <a href="/">Privvit</a>
     </h1>
@@ -21,7 +21,7 @@
       {% include "components/alert.njk" %}
     {% endif %}
   </section>
-  <main>
+  <main class="h-[calc(100vh-68px)] overflow-scroll">
     {% block main %}{% endblock %}
   </main>
 {% endblock %}
