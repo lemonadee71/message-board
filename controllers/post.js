@@ -147,6 +147,9 @@ module.exports = {
           .then((post) => {
             res.render('pages/post/index', {
               post: post.toSafeObject(),
+              is_current_user_member: req.user?.boards.includes(
+                post.board.boardname
+              ),
             });
           })
           .catch(next);
