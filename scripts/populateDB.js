@@ -15,7 +15,7 @@ const createFakePosts = (n, author, board) =>
 
 module.exports = async () => {
   await User.create([
-    { username: 'admin', password: 'admin' },
+    { username: 'admin', password: 'admin', boards: ['top'] },
     { username: 'lemon', password: '1234', boards: ['top'] },
     { username: 'user', password: '1234', boards: ['test', 'top'] },
   ]);
