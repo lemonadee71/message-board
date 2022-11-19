@@ -1,6 +1,7 @@
 const escapeHtml = require('escape-html');
 const mongoose = require('mongoose');
 const { NotFoundError } = require('../utils');
+const Post = require('./post');
 const { Timestamp } = require('./utils');
 
 const Schema = mongoose.Schema;
@@ -27,6 +28,19 @@ const BoardSchema = new Schema({
   private: { type: Boolean, default: true },
   creator: { type: String, ref: 'User', required: true },
   date_created: Timestamp,
+});
+
+BoardSchema.pre('save', async function () {
+  // I'd like this to be after save but can't find a reliable way to do so atm
+  // so let's assume that there will be no errors after saving so it can proceed
+  if (this.isModified('private')) {
+    if (this.private) {
+      await Post.updateMany(
+        { board: this.boardname },
+        { $set: { private: true } }
+      );
+    }
+  }
 });
 
 BoardSchema.virtual('url').get(function () {
