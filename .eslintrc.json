@@ -17,6 +17,7 @@
     "import/newline-after-import": "off",
     "no-continue": "off",
     "no-console": "warn",
+    "no-param-reassign": ["error", { "props": false }],
     "no-plusplus": "off",
     "no-restricted-globals": "warn",
     "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
