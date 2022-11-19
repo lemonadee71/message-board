@@ -108,7 +108,7 @@ module.exports = {
         })(req, res, next);
       },
       (req, res) => {
-        res.redirect(new URL(req.fromPath).pathname);
+        res.redirect(req.fromPath ? new URL(req.fromPath).pathname : '/');
       },
     ],
   },
