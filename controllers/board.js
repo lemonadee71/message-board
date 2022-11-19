@@ -64,7 +64,13 @@ module.exports = {
             (res) =>
               res && Promise.reject(new Error(`Board name is already taken`))
           )
-        ),
+        )
+        .custom((value) => {
+          if (value.toLowerCase() === 'all') {
+            throw new Error('`all` is a reserved word');
+          }
+          return true;
+        }),
       ...validateAndSanitizeBoardData,
       finishValidation()
         .ifSuccess((req, res) => {
