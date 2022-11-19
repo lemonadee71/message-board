@@ -41,7 +41,7 @@ module.exports = {
       (req, res) => {
         res.render('pages/board/create_form', {
           title: 'Create New Board',
-          action: `/b/_/create`,
+          action: `/create/board`,
         });
       },
     ],
@@ -91,7 +91,7 @@ module.exports = {
         .ifHasError((errors, req, res) => {
           res.render('pages/board/create_form', {
             title: 'Create New Board',
-            action: `/b/_/create`,
+            action: `/create/board`,
             messages: errors,
           });
         }),
