@@ -41,6 +41,7 @@ module.exports = {
       body('username')
         .trim()
         .escape()
+        .toLowerCase()
         .custom(hasNoSpace)
         .withMessage('No spaces are allowed')
         .isAlphanumeric()

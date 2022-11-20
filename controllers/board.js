@@ -60,7 +60,7 @@ module.exports = {
         )
         .custom((value) =>
           // Might throw an error unrelated to validation (fetching errors)
-          Board.findById(value).then(
+          Board.findById(value.toLowerCase()).then(
             (res) =>
               res && Promise.reject(new Error(`Board name is already taken`))
           )
@@ -74,9 +74,11 @@ module.exports = {
       ...validateAndSanitizeBoardData,
       finishValidation()
         .ifSuccess((req, res) => {
+          // We didn't lowercase here so we can preserve original input as display_name
           new Board({
             boardname: req.body.boardname,
-            display_name: req.body.display_name || undefined,
+            display_name:
+              req.body.display_name || req.body.boardname || undefined,
             passcode: req.body.passcode || undefined,
             description: req.body.description,
             private: !!req.body.private,
@@ -99,7 +101,7 @@ module.exports = {
   },
   page: {
     get: [
-      param('boardname').escape(),
+      param('boardname').toLowerCase().escape(),
       extractFlashMessages('info'),
       extractFlashMessages('success'),
       extractFlashMessages('error'),
@@ -131,6 +133,7 @@ module.exports = {
   edit: {
     get: [
       isLoggedIn,
+      param('boardname').toLowerCase().escape(),
       (req, res, next) => {
         Board.findByName(req.params.boardname)
           .then((board) => {
@@ -155,6 +158,7 @@ module.exports = {
     ],
     post: [
       isLoggedIn,
+      param('boardname').toLowerCase().escape(),
       ...validateAndSanitizeBoardData,
       finishValidation()
         .ifSuccess(async (req, res, next) => {
@@ -187,7 +191,7 @@ module.exports = {
   join: {
     get: [
       isLoggedIn,
-      param('boardname').escape(),
+      param('boardname').toLowerCase().escape(),
       // Redirect if already a member
       (req, res, next) => {
         req.isMember = isMember(req.user, req.params.boardname);
@@ -208,7 +212,7 @@ module.exports = {
     ],
     post: [
       isLoggedIn,
-      param('boardname').escape(),
+      param('boardname').toLowerCase().escape(),
       body('passcode')
         .trim()
         .escape()
@@ -244,6 +248,7 @@ module.exports = {
   leave: {
     post: [
       isLoggedIn,
+      param('boardname').toLowerCase().escape(),
       async (req, res) => {
         req.user.boards = req.user.boards.filter(
           (v) => v !== req.params.boardname

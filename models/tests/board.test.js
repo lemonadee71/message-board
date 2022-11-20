@@ -15,6 +15,14 @@ afterAll((done) => {
   done();
 });
 
+it('Boardname is lowercased', async () => {
+  const board = new Board({ boardname: 'Foo', creator: user.username });
+  await board.save();
+
+  expect(board.boardname).toBe('foo');
+  expect(async () => Board.findByName('foo')).not.toThrow();
+});
+
 it("Updates user's boards when it joins a board", async () => {
   const board = new Board({ boardname: 'testboard', creator: user.username });
   await board.save();

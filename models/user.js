@@ -9,6 +9,7 @@ const UserSchema = new Schema({
     type: String,
     maxLength: 30,
     alias: 'username',
+    set: (value) => value.toLowerCase(),
   },
   password: {
     type: String,
@@ -26,14 +27,14 @@ const UserSchema = new Schema({
   date_created: Timestamp,
 });
 
+UserSchema.virtual('url').get(function () {
+  return `/u/${this.username}`;
+});
+
 UserSchema.pre('save', async function () {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);
   }
-});
-
-UserSchema.virtual('url').get(function () {
-  return `/u/${this.username}`;
 });
 
 UserSchema.methods.setPassword = async function (newPassword) {

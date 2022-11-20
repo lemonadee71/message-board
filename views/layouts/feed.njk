@@ -26,6 +26,11 @@
 
 {% block scripts %}
   <script>
-    Array.from(document.body.querySelectorAll('[data-href]')).map(e => e.addEventListener('click', () => window.location.assign(e.dataset.href)))
+    window.history.replaceState(null, '', window
+      .location
+      .pathname
+      .toLowerCase());
+
+    Array.from(document.body.querySelectorAll('[data-href]')).map(e => e.addEventListener('click', () => window.location.assign(e.dataset.href)));
   </script>
 {% endblock %}

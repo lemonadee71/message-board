@@ -36,3 +36,11 @@ it('Password is not rehashed if other fields changed', async () => {
 
   expect(await user.comparePassword('321')).toBe(true);
 });
+
+it('Username is lowercased', async () => {
+  const newUser = new User({ username: 'Foo', password: '1234' });
+  await newUser.save();
+
+  expect(newUser.username).toBe('foo');
+  expect(async () => User.findById('foo').orFail(new Error())).not.toThrow();
+});

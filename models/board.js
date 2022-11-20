@@ -11,6 +11,7 @@ const BoardSchema = new Schema({
     type: String,
     maxLength: 30,
     alias: 'boardname',
+    set: (value) => value.toLowerCase(),
   },
   display_name: {
     type: String,
@@ -30,6 +31,10 @@ const BoardSchema = new Schema({
   date_created: Timestamp,
 });
 
+BoardSchema.virtual('url').get(function () {
+  return `/b/${this.boardname}`;
+});
+
 BoardSchema.pre('save', async function () {
   // I'd like this to be after save but can't find a reliable way to do so atm
   // so let's assume that there will be no errors after saving so it can proceed
@@ -41,10 +46,6 @@ BoardSchema.pre('save', async function () {
       );
     }
   }
-});
-
-BoardSchema.virtual('url').get(function () {
-  return `/b/${this.boardname}`;
 });
 
 BoardSchema.methods.toSafeObject = function () {
