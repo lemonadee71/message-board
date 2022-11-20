@@ -1,10 +1,9 @@
-{% extends "layouts/base.njk" %}
-{% from "components/buttons.njk" import get_btn %}
+{% extends "layouts/not_found.njk" %}
 
-{% block body %}
-  <main class="text-center container-auto mt-24 max-w-md">
-    <h1 class="font-semibold text-xl mb-4">Sorry, there aren't any post on Privvit with that id</h1>
-    <h2 class="font-medium text-lg mb-12">This post may have been deleted or the id is incorrect.</h2>
-    {{ get_btn('Go Back', '/') }}
-  </main>
+{% block heading %}
+  Sorry, there aren't any post on Privvit with that id
+{% endblock %}
+
+{% block subheading %}
+  This post may have been deleted or the id is incorrect.
 {% endblock %}
