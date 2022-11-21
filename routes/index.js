@@ -13,5 +13,6 @@ router.post('/logout', controller.logout);
 router.get('/create/board', boardController.create.get);
 router.post('/create/board', boardController.create.post);
 router.get('/profile', userController.index);
+router.post('/profile/edit', userController.edit);
 
 module.exports = router;

@@ -8,6 +8,34 @@
   You haven't made any posts yet!
 {% endblock %}
 
+{# TODO: Use fetch instead to prevent reload #}
+
+{% block subheader %}
+  <div class="grid grid-cols-[auto_1fr] grid-rows-2 py-4 px-28">
+    <img class="row-span-2 rounded-full h-14 w-14 mr-6 active:ring-teal-500 self-center" src="{{ current_user.username | avatar }}" alt="profile picture"/>
+    <div class="self-end flex flex-row justify-between" x-data="{ editing: false }">
+      <template x-if="!editing">
+        <h1 title="Edit username" class="font-bold tracking-wide text-3xl cursor-pointer" @dblclick="editing = true">
+          {{ current_user.display_name }}
+        </h1>
+      </template>
+      <template x-if="editing">
+        <div class="flex items-center">
+          <form class="mr-2 flex items-center" action="/profile/edit?field=display_name" method="post">
+            <input class="font-semibold text-xl px-2 mr-2" type="text" name="display_name" value="{{ current_user.display_name }}" placeholder="Display name"/>
+            <button type="submit" class="btn--primary">Save</button>
+          </form>
+          <button class="btn--danger" @click="editing = false">
+            Cancel
+          </button>
+        </div>
+      </template>
+    </div>
+    <p class="font-medium tracking-wide text-lg text-gray-600 self-start">{{ current_user.url }} • Joined
+      {{ current_user.date_created | formatdistance }} ago</p>
+  </div>
+{% endblock %}
+
 {% block left_column %}
   <div class="h-16 bg-white px-6 py-2 rounded flex justify-between items-center">
     <div class="space-x-6">
@@ -49,13 +77,62 @@
 {% endblock %}
 
 {% block right_column %}
-  {% call card('About') %}
-  <p class="text-sm text-gray-500 text-center">
-    {{ current_user.url }} • Joined
-    {{ current_user.date_created | formatdistance }} ago
-  </p>
-  <p class="prose prose-sm">
-    {{ current_user.bio | escape if current_user.bio else "You haven't written anything yet!" }}
-  </p>
-  {% endcall %}
+  <div class="shadow-sm rounded-md bg-white" x-data="{ editing: false }">
+    <div class="p-3 rounded-t-md text-white bg-blue-500 flex justify-between group">
+      <h2 class="font-semibold">About</h2>
+      <template x-if="!editing">
+        <button title="Edit" aria-label="edit bio" class="hidden group-hover:block" @click="editing = true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="stroke-white hover:stroke-gray-300"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            stroke-width="1.25"
+            stroke="#ffffff"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M9 7h-3a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-3"/>
+            <path d="M9 15h3l8.5 -8.5a1.5 1.5 0 0 0 -3 -3l-8.5 8.5v3"/>
+            <line x1="16" y1="5" x2="19" y2="8"/>
+          </svg>
+        </button>
+      </template>
+      <template x-if="editing">
+        <button title="Cancel" aria-label="cancel edit" @click="editing = false">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="stroke-red-600 hover:stroke-red-700"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="#ffffff"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </template>
+    </div>
+
+    <div class="p-3">
+      <template x-if="editing">
+        <form class="space-y-3" action="/profile/edit?field=bio" method="post">
+          <textarea class="mt-1 block w-full text-sm" rows="3" name="bio" maxlength="200" placeholder="Tell us about yourself...">{{ current_user.bio }}</textarea>
+          <button type="submit" class="btn--primary">Save</button>
+        </form>
+      </template>
+      <template x-if="!editing">
+        <p class="prose prose-sm">
+          {{ current_user.bio | escape if current_user.bio else "You haven't written anything yet!" }}
+        </p>
+      </template>
+    </div>
+  </div>
 {% endblock %}
