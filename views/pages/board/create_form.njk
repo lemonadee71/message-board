@@ -1,16 +1,20 @@
-{% from "components/form_controls.njk" import input %}
-{% extends "layouts/form.njk" %}
+{% from "components/form_controls.njk" import form, input %}
+{% extends "layouts/base.njk" %}
 
-{% set form_title = title %}
-{% set form_action = action %}
-
-{% block form %}
-  {{ input('text', 'boardname', 'Board name', required=true, value=board.boardname, class="mt-1 block w-full read-only:bg-gray-200", attrs={ readonly: mode == 'edit' }) }}
-  {{ input('text', 'display_name', "Display name", value=board.display_name) }}
-  {{ input('text', 'passcode', value=board.passcode) }}
-  {{ input('textarea', 'description', value=board.description) }}
-  <label class="block">
-    <input type="checkbox" name="private" {{ ("checked" if board.private) if mode == 'edit' else "checked" }}/>
-    <span class="text-gray-700">Private (posts will be hidden for non-members)</span>
-  </label>
+{% block body %}
+  {% if messages %}
+    {% include "components/alert.njk" %}
+  {% endif %}
+  <main class="container-auto">
+    {% call form(title, action) %}
+    {{ input('text', 'boardname', 'Board name', required=true, value=board.boardname, class="mt-1 block w-full read-only:bg-gray-200", attrs={ readonly: mode === 'edit' }) }}
+    {{ input('text', 'display_name', "Display name", value=board.display_name) }}
+    {{ input('text', 'passcode', value=board.passcode) }}
+    {{ input('textarea', 'description', value=board.description) }}
+    <label class="block">
+      <input type="checkbox" name="private" {{ ("checked" if board.private) if board else "checked" }}/>
+      <span class="text-gray-700">Private (posts will be hidden for non-members)</span>
+    </label>
+    {% endcall %}
+  </main>
 {% endblock %}
