@@ -6,9 +6,6 @@
 
 {% block head %}
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <script>
-    document.addEventListener('alpine:init', () => Alpine.store('tab', 'boards'))
-  </script>
 {% endblock %}
 
 {% block no_posts_msg %}
@@ -16,32 +13,41 @@
 {% endblock %}
 
 {% block left_column %}
-  <div class="bg-white px-6 py-2 space-x-6 rounded">
-    <button class="text-lg text-gray-700 font-semibold tracking-wide" @click="$store.tab = 'posts'">POSTS</button>
-    <button class="text-lg text-gray-700 font-semibold tracking-wide" @click="$store.tab = 'boards'">BOARDS</button>
+  <div class="h-16 bg-white px-6 py-2 rounded flex justify-between items-center">
+    <div class="space-x-6">
+      <button class="text-lg text-gray-700 tracking-wide" :class="tab === 'posts' && 'font-semibold'" @click="tab = 'posts'">
+        POSTS
+      </button>
+      <button
+        class="text-lg text-gray-700 tracking-wide"
+        :class="tab === 'boards' && 'font-semibold'"
+        @click="tab = 'boards'">
+        BOARDS
+      </button>
+    </div>
+    <template x-if="tab === 'boards'">
+      {{ get_btn('Create', '/create/board') }}
+    </template>
   </div>
-  <template x-if="$store.tab === 'posts'">
+  <template x-if="tab === 'posts'">
     <div class="flex flex-col gap-4">
       {{ super() }}
     </div>
   </template>
-  <template x-if="$store.tab === 'boards'">
-    <div class="space-y-4">
-      <div>{{ get_btn('Create Board', '/create/board') }}</div>
-      <div class="grid grid-cols-3 gap-4">
-        {% for board in boards %}
-          {% call card(board.display_name, class="border border-solid hover:border-gray-500 cursor-pointer", header_class="font-semibold text-white bg-amber-600", attrs={ '@click': "window.location.assign('" + board.url + "')" } ) %}
-          {% if board.description %}
-            <div class="prose prose-sm">{{ board.description | makehtml | safe }}</div>
-          {% else %}
-            <div class="prose prose-sm">
-              <p>This board doesn't have any information yet!</p>
-            </div>
-          {% endif %}
-          <p class="text-gray-500 text-sm">Created {{ board.date_created | formatdate }}</p>
-          {% endcall %}
-        {% endfor %}
-      </div>
+  <template x-if="tab === 'boards'">
+    <div class="grid grid-cols-3 gap-4">
+      {% for board in boards %}
+        {% call card(board.display_name, class="border border-solid hover:border-gray-500 cursor-pointer", header_class="font-semibold text-white bg-amber-600", attrs={ '@click': "window.location.assign('" + board.url + "')" } ) %}
+        {% if board.description %}
+          <div class="prose prose-sm">{{ board.description | makehtml | safe }}</div>
+        {% else %}
+          <div class="prose prose-sm">
+            <p>This board doesn't have any information yet!</p>
+          </div>
+        {% endif %}
+        <p class="text-gray-500 text-sm">Created {{ board.date_created | formatdate }}</p>
+        {% endcall %}
+      {% endfor %}
     </div>
   </template>
 {% endblock %}

@@ -23,6 +23,7 @@ module.exports = {
           res.render('pages/user/index', {
             posts: results.posts.map((post) => post.toSafeObject()),
             boards: results.boards.map((board) => board.toSafeObject()),
+            global_state: "{ tab: 'posts' }",
           });
         }
       );

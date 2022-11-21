@@ -21,7 +21,7 @@
       {% include "components/alert.njk" %}
     {% endif %}
   </section>
-  <main class="h-[calc(100vh-68px)] overflow-scroll" x-data>
+  <main class="h-[calc(100vh-68px)] overflow-scroll" x-data="{{ global_state }}">
     {% block main %}{% endblock %}
   </main>
 {% endblock %}
