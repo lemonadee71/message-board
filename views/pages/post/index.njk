@@ -40,7 +40,7 @@
         <p class="text-sm text-gray-500 mb-2">
           Posted by
           {% if current_user and is_current_user_member %}
-            <a href="/u/{{ post.author }}">u/{{ post.author }}</a>
+            <a class="hover:underline" href="/u/{{ post.author }}">u/{{ post.author }}</a>
             • {{ post.date_created | formatdistance }}
           {% else %}
             <span>&block;&block;&block;&block;&block;</span>

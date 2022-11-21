@@ -30,13 +30,13 @@
     {% if not current_user %}
       <p class="font-semibold text-center text-gray-700">
         This board is private.
-        <a href="/login">Log in</a>
+        <a class="hover:underline" href="/login">Log in</a>
         to see posts on this board
       </p>
     {% elif not is_current_user_member %}
       <p class="font-semibold text-center text-gray-700">
         This board is private.
-        <a href="{{ board.url }}/join">Join</a>
+        <a class="hover:underline" href="{{ board.url }}/join">Join</a>
         to see posts on this board
       </p>
     {% else %}

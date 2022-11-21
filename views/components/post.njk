@@ -10,13 +10,13 @@
     <p class="text-sm text-gray-500 mb-2">
       {% if is_main_feed %}
         Posted in
-        <a href="/b/{{ post.board }}">/b/{{ post.board }}</a>
+        <a class="font-semibold hover:underline" href="/b/{{ post.board }}">/b/{{ post.board }}</a>
       {% elif not (current_user and is_current_user_member) %}
         Posted by
         <span>&block;&block;&block;&block;&block;</span>
       {% else %}
         Posted by
-        <a href="/u/{{ post.author }}">u/{{ post.author }}</a>
+        <a class="hover:underline" href="/u/{{ post.author }}">u/{{ post.author }}</a>
         • {{ post.date_created | formatdistance }}
       {% endif %}
     </p>
