@@ -10,6 +10,7 @@
     {% call form(title, '/signup') %}
     {{ input('text', 'username', required=true, show_required=false) }}
     {{ input('password', 'password', required=true, show_required=false) }}
+    {{ input('textarea', 'bio') }}
     {% endcall %}
   </main>
 {% endblock %}

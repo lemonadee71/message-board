@@ -63,10 +63,14 @@ module.exports = {
         .withMessage('No spaces are allowed')
         .isStrongPassword()
         .withMessage('Password must be a strong password'),
+      body('bio')
+        .optional({ checkFalsy: true })
+        .trim()
+        .isLength({ max: 200 })
+        .withMessage('User bio must not exceed 200 characters'),
       finishValidation()
         .ifSuccess((req, res, next) => {
-          const { username, password } = req.body;
-          new User({ username, password }).save(next);
+          new User(req.body).save(next);
         })
         .ifHasError((errors, req, res) =>
           res.render('signup', { messages: errors })
