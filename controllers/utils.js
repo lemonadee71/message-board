@@ -55,9 +55,11 @@ const createMessages = (type, items, header) => ({
 });
 
 const extractFlashMessages = (key, type) => (req, res, next) => {
-  const messages = req.flash(key);
+  const messages = [req.flash(key)].flat();
 
-  if (messages.length > 1) {
+  if (messages[0]?.items && messages[0]?.colors) {
+    res.locals.messages = messages[0];
+  } else if (messages.length > 1) {
     res.locals.messages = createMessages(type || key, messages);
   } else if (messages.length === 1) {
     res.locals.messages = createMessages(type || key, null, messages[0]);
