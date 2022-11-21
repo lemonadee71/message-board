@@ -1,6 +1,7 @@
 const express = require('express');
 const controller = require('../controllers');
 const boardController = require('../controllers/board');
+const userController = require('../controllers/user');
 const router = express.Router();
 
 router.get('/', controller.home);
@@ -11,5 +12,6 @@ router.post('/login', controller.login.post);
 router.post('/logout', controller.logout);
 router.get('/create/board', boardController.create.get);
 router.post('/create/board', boardController.create.post);
+router.get('/profile', userController.index);
 
 module.exports = router;

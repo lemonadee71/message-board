@@ -1,0 +1,59 @@
+{% from "components/card.njk" import card %}
+{% from "components/buttons.njk" import get_btn %}
+{% extends "layouts/feed.njk" %}
+
+{% set show_board_only = true %}
+
+{% block head %}
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    document.addEventListener('alpine:init', () => Alpine.store('tab', 'boards'))
+  </script>
+{% endblock %}
+
+{% block no_posts_msg %}
+  You haven't made any posts yet!
+{% endblock %}
+
+{% block left_column %}
+  <div class="bg-white px-6 py-2 space-x-6 rounded">
+    <button class="text-lg text-gray-700 font-semibold tracking-wide" @click="$store.tab = 'posts'">POSTS</button>
+    <button class="text-lg text-gray-700 font-semibold tracking-wide" @click="$store.tab = 'boards'">BOARDS</button>
+  </div>
+  <template x-if="$store.tab === 'posts'">
+    <div class="flex flex-col gap-4">
+      {{ super() }}
+    </div>
+  </template>
+  <template x-if="$store.tab === 'boards'">
+    <div class="space-y-4">
+      <div>{{ get_btn('Create Board', '/create/board') }}</div>
+      <div class="grid grid-cols-3 gap-4">
+        {% for board in boards %}
+          {% call card(board.display_name, class="border border-solid hover:border-gray-500 cursor-pointer", header_class="font-semibold text-white bg-amber-600", attrs={ '@click': "window.location.assign('" + board.url + "')" } ) %}
+          {% if board.description %}
+            <div class="prose prose-sm">{{ board.description | makehtml | safe }}</div>
+          {% else %}
+            <div class="prose prose-sm">
+              <p>This board doesn't have any information yet!</p>
+            </div>
+          {% endif %}
+          <p class="text-gray-500 text-sm">Created {{ board.date_created | formatdate }}</p>
+          {% endcall %}
+        {% endfor %}
+      </div>
+    </div>
+  </template>
+{% endblock %}
+
+{% block right_column %}
+  {% call card('About') %}
+  <p class="text-sm text-gray-500 text-center">
+    {{ current_user.url }} • Joined
+    {{ current_user.date_created | formatdistance }} ago
+  </p>
+  <p class="prose prose-sm">
+    {{ current_user.bio | escape if current_user.bio else "You haven't written anything yet!" }}
+  </p>
+  {% endcall %}
+{% endblock %}

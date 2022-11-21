@@ -53,7 +53,7 @@ UserSchema.methods.toSafeObject = function () {
 };
 
 UserSchema.statics.findByName = function (username) {
-  return this.findById(username).orFail(new NotFoundError('Board not found'));
+  return this.findById(username).orFail(new NotFoundError('User not found'));
 };
 
 module.exports = mongoose.model('User', UserSchema);
