@@ -20,7 +20,7 @@ const BoardSchema = new Schema({
       return this.boardname;
     },
   },
-  description: { type: String, get: escapeHtml },
+  description: { type: String, get: escapeHtml, default: '' },
   passcode: {
     type: String,
     default: () => Math.random().toString(36).slice(2, 8),
