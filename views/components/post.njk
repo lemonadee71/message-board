@@ -6,7 +6,7 @@
 {% endif %}
 
 {% if show %}
-  <div class="bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500" data-href="{{ post.url }}">
+  <div class="bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500" data-href="{{ post.url }}" @click="window.location.assign($el.dataset.href)">
     <p class="text-sm text-gray-500 mb-2">
       {% if show_board_only %}
         Posted in

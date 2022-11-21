@@ -1,11 +1,21 @@
 {% extends "layouts/main.njk" %}
 
+{% block head %}
+  <script defer="defer" src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    window.history.replaceState(null, '', window
+      .location
+      .pathname
+      .toLowerCase());
+  </script>
+{% endblock %}
+
 {% block main %}
   {% block subheader %}{% endblock %}
 
   <div class="bg-neutral-200 py-6">
     <div class="container-auto grid grid-cols-[3fr_1fr] gap-6">
-      <section class="flex flex-col gap-4">
+      <section id="feed-left-column" class="flex flex-col gap-4">
         {% block left_column %}
           {% if posts.length %}
             {% for post in posts %}
@@ -21,20 +31,9 @@
         {% endblock %}
       </section>
 
-      <section class="flex flex-col gap-4">
+      <section id="feed-right-column" class="flex flex-col gap-4">
         {% block right_column %}{% endblock %}
       </section>
     </div>
   </div>
-{% endblock %}
-
-{% block scripts %}
-  <script>
-    window.history.replaceState(null, '', window
-      .location
-      .pathname
-      .toLowerCase());
-
-    Array.from(document.body.querySelectorAll('[data-href]')).map(e => e.addEventListener('click', () => window.location.assign(e.dataset.href)));
-  </script>
 {% endblock %}
