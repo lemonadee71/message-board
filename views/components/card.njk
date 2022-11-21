@@ -1,7 +1,7 @@
-{% macro card(title) %}
-  <div class="shadow-sm rounded-md bg-white">
-    <h2 class="font-semibold p-3 text-white bg-blue-500 rounded-t-md">{{ title }}</h2>
-    <div class="p-3 space-y-3">
+{% macro card(title, class="", header_class="font-semibold text-white bg-blue-500", body_class="space-y-3", attrs={}) %}
+  <div class="shadow-sm rounded-md bg-white {{ class }}" {{ attrs | stringify }}>
+    <h2 class="p-3 rounded-t-md {{ header_class }}">{{ title }}</h2>
+    <div class="p-3 {{ body_class }}">
       {{ caller() }}
     </div>
   </div>
