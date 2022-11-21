@@ -8,8 +8,9 @@
   {% endif %}
   <main class="container-auto">
     {% call form(title, '/signup') %}
-    {{ input('text', 'username', required=true, show_required=false) }}
-    {{ input('password', 'password', required=true, show_required=false) }}
+    {{ input('text', 'username', required=true, show_required=true) }}
+    {{ input('text', 'display_name', 'Display name') }}
+    {{ input('password', 'password', required=true, show_required=true) }}
     {{ input('textarea', 'bio') }}
     {% endcall %}
   </main>

@@ -57,6 +57,14 @@ module.exports = {
               res && Promise.reject(new Error(`Username is already taken`))
           )
         ),
+      body('display_name')
+        .optional({ checkFalsy: true })
+        .trim()
+        .escape()
+        .isLength({ min: 2, max: 30 })
+        .withMessage(
+          'Must be at least 2 characteres and no more than 30 characters'
+        ),
       body('password')
         .trim()
         .custom(hasNoSpace)
@@ -70,7 +78,12 @@ module.exports = {
         .withMessage('User bio must not exceed 200 characters'),
       finishValidation()
         .ifSuccess((req, res, next) => {
-          new User(req.body).save(next);
+          new User({
+            username: req.body.username,
+            password: req.body.password,
+            display_name: req.body.display_name || undefined,
+            bio: req.body.bio,
+          }).save(next);
         })
         .ifHasError((errors, req, res) =>
           res.render('signup', { messages: errors })
