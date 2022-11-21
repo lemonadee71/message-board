@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+const { NotFoundError } = require('../utils');
 const { Timestamp } = require('./utils');
 
 const Schema = mongoose.Schema;
@@ -49,6 +50,10 @@ UserSchema.methods.toSafeObject = function () {
   const o = this.toObject({ virtuals: true });
   delete o.password;
   return o;
+};
+
+UserSchema.statics.findByName = function (username) {
+  return this.findById(username).orFail(new NotFoundError('Board not found'));
 };
 
 module.exports = mongoose.model('User', UserSchema);

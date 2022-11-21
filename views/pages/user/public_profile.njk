@@ -1,0 +1,20 @@
+{% from "components/card.njk" import card %}
+{% extends "layouts/feed.njk" %}
+
+{% set show_board_only = true %}
+
+{% block no_posts_msg %}
+  This user hasn't made any posts yet!
+{% endblock %}
+
+{% block right_column %}
+  {% call card('About ' + user.display_name) %}
+  <p class="text-sm text-gray-500 text-center">
+    {{ user.url }} • Joined
+    {{ user.date_created | formatdistance }} ago
+  </p>
+  <p>
+    {{ user.bio | escape if user.bio else "This user hasn't written anything yet!" }}
+  </p>
+  {% endcall %}
+{% endblock %}

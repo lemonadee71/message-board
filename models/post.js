@@ -16,6 +16,10 @@ const PostSchema = new Schema({
   date_created: Timestamp,
 });
 
+PostSchema.virtual('url').get(function () {
+  return `/p/${this.id}`;
+});
+
 PostSchema.methods.toSafeObject = function () {
   return this.toObject({ getters: true, virtuals: true });
 };
@@ -24,8 +28,8 @@ PostSchema.statics.findByObjId = function (id) {
   return this.findById(id).orFail(new NotFoundError('Post not found'));
 };
 
-PostSchema.virtual('url').get(function () {
-  return `/p/${this.id}`;
-});
+PostSchema.statics.findByAuthor = function (username) {
+  return this.find({ author: username });
+};
 
 module.exports = mongoose.model('Post', PostSchema);

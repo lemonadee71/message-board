@@ -8,7 +8,7 @@
 {% if show %}
   <div class="bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500" data-href="{{ post.url }}">
     <p class="text-sm text-gray-500 mb-2">
-      {% if is_main_feed %}
+      {% if show_board_only %}
         Posted in
         <a class="font-semibold hover:underline" href="/b/{{ post.board }}">/b/{{ post.board }}</a>
       {% elif not (current_user and is_current_user_member) %}
