@@ -120,8 +120,9 @@ module.exports = {
   logout: (req, res, next) => {
     req.logout((err) => {
       if (err) return next(err);
+      const referer = new URL(req.get('referer')).pathname;
 
-      res.redirect(new URL(req.get('referer')).pathname);
+      res.redirect(referer === '/profile' ? '/' : referer);
     });
   },
 };
