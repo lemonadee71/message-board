@@ -19,9 +19,13 @@ module.exports = {
       async.parallel(
         {
           boards: (callback) =>
-            Board.find({ _id: { $in: req.user.boards } }).exec(callback),
+            Board.find({ _id: { $in: req.user.boards } })
+              .sort({ boardname: 'desc' })
+              .exec(callback),
           posts: (callback) =>
-            Post.findByAuthor(req.user.username).exec(callback),
+            Post.findByAuthor(req.user.username)
+              .sort({ date_created: 'desc' })
+              .exec(callback),
         },
         (err, results) => {
           if (err) return next(err);
@@ -44,7 +48,9 @@ module.exports = {
           user: (callback) =>
             User.findByName(req.params.username).exec(callback),
           posts: (callback) =>
-            Post.findByAuthor(req.params.username).exec(callback),
+            Post.findByAuthor(req.params.username)
+              .sort({ date_created: 'desc' })
+              .exec(callback),
         },
         (err, results) => {
           if (err) return next(err);

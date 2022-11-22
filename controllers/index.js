@@ -19,8 +19,12 @@ module.exports = {
     (req, res, next) => {
       async.parallel(
         {
-          boards: (callback) => Board.find().exec(callback),
-          posts: (callback) => Post.find({ private: false }).exec(callback),
+          boards: (callback) =>
+            Board.find().sort({ date_created: 'desc' }).exec(callback),
+          posts: (callback) =>
+            Post.find({ private: false })
+              .sort({ date_created: 'desc' })
+              .exec(callback),
         },
         (err, results) => {
           if (err) return next(err);

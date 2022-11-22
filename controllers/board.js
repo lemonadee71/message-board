@@ -109,7 +109,9 @@ module.exports = {
             board: (callback) =>
               Board.findByName(req.params.boardname).exec(callback),
             posts: (callback) =>
-              Post.find({ board: req.params.boardname }).exec(callback),
+              Post.find({ board: req.params.boardname })
+                .sort({ date_created: 'desc' })
+                .exec(callback),
           },
           (err, results) => {
             if (err) return next(err);
