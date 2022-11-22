@@ -11,8 +11,6 @@ const {
   finishValidation,
 } = require('./utils');
 
-const isMember = (user, boardname) => user?.boards.includes(boardname);
-
 const validateAndSanitizeBoardData = [
   body('display_name')
     .optional({ checkFalsy: true })
@@ -119,10 +117,7 @@ module.exports = {
             res.render('pages/board/index', {
               board: results.board.toSafeObject(),
               posts: results.posts.map((post) => post.toSafeObject()),
-              is_current_user_member: isMember(
-                req.user,
-                results.board.boardname
-              ),
+              is_current_user_member: req.user?.isMember(results.board.id),
             });
           }
         );
@@ -194,9 +189,7 @@ module.exports = {
       param('boardname').toLowerCase().escape(),
       // Redirect if already a member
       (req, res, next) => {
-        req.isMember = isMember(req.user, req.params.boardname);
-
-        if (req.isMember) {
+        if (req.user?.isMember(req.params.boardname)) {
           req.flash('info', 'You are already a member of this board');
           return res.redirect(`/b/${req.params.boardname}`);
         }
@@ -206,7 +199,7 @@ module.exports = {
       (req, res) => {
         res.render('pages/board/join_form', {
           boardname: req.params.boardname,
-          is_current_user_member: req.isMember,
+          is_current_user_member: req.user?.isMember(req.params.boardname),
         });
       },
     ],

@@ -44,3 +44,10 @@ it('Username is lowercased', async () => {
   expect(newUser.username).toBe('foo');
   expect(async () => User.findById('foo').orFail(new Error())).not.toThrow();
 });
+
+// Reliant on populateDB.js so not stable
+it('isMember works', async () => {
+  const lemon = await User.findById('lemon');
+
+  expect(lemon.isMember('top')).toBe(true);
+});

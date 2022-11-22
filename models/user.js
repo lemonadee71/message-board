@@ -46,6 +46,10 @@ UserSchema.methods.comparePassword = function (input) {
   return bcrypt.compare(input, this.password);
 };
 
+UserSchema.methods.isMember = function (boardname) {
+  return this.boards.includes(boardname);
+};
+
 UserSchema.methods.toSafeObject = function () {
   const o = this.toObject({ virtuals: true });
   delete o.password;
