@@ -1,6 +1,12 @@
 {% extends "layouts/main.njk" %}
 {% from "components/buttons.njk" import get_btn, post_btn %}
 
+{% block head %}
+  <script>
+    window.history.replaceState(null, '', '{{ post.url }}');
+  </script>
+{% endblock %}
+
 {% block main %}
   <div class="h-full bg-neutral-200">
     <div class="container-auto max-w-sm space-y-4 py-4">
@@ -31,8 +37,8 @@
         </a>
         {% if current_user and current_user.id === post.author %}
           <div class="flex gap-4">
-            {{ get_btn('Edit', post.url + '/edit') }}
-            {{ post_btn('Delete', post.url + '/delete', class='btn--danger') }}
+            {{ get_btn('Edit', post.shorturl + '/edit') }}
+            {{ post_btn('Delete', post.shorturl + '/delete', class='btn--danger') }}
           </div>
         {% endif %}
       </div>

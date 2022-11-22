@@ -30,7 +30,8 @@
     "nunjucks": "^3.2.3",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "showdown": "^2.1.0"
+    "showdown": "^2.1.0",
+    "slugify": "^1.6.5"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",

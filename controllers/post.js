@@ -69,13 +69,13 @@ module.exports = {
     get: [
       isLoggedIn,
       (req, res, next) => {
-        Post.findByObjId(req.params.postid)
+        Post.findByShortId(req.params.postid)
           .populate('board')
           .then((post) => {
             if (req.user.id === post.author) {
               res.render('pages/board/create_post_form', {
                 title: 'Update post',
-                action: `${post.url}/edit`,
+                action: `${post.shorturl}/edit`,
                 // do not escape to show original input
                 post: post.toObject({ virtuals: true }),
                 board: post.board,
@@ -87,6 +87,7 @@ module.exports = {
           })
           .catch(next);
       },
+      ifNotFound('pages/post/not_found'),
     ],
     post: [
       isLoggedIn,
@@ -102,7 +103,7 @@ module.exports = {
       finishValidation()
         .ifSuccess(async (req, res, next) => {
           try {
-            const post = await Post.findByObjId(req.params.postid).populate(
+            const post = await Post.findByShortId(req.params.postid).populate(
               'board'
             );
             Object.assign(post, {
@@ -122,7 +123,7 @@ module.exports = {
           res.render('pages/board/create_post_form', {
             title: 'Update post',
             action: `/p/${req.params.postid}/edit`,
-            post: { ...req.body, url: `/p/${req.params.postid}` },
+            post: req.body,
             messages: errors,
           });
         }),
@@ -132,7 +133,7 @@ module.exports = {
   delete: [
     isLoggedIn,
     (req, res) => {
-      Post.findByIdAndDelete(req.params.postid).then((post) => {
+      Post.findOneAndDelete({ shortid: req.params.postid }).then((post) => {
         res.redirect(`/b/${post.board}`);
       });
     },
@@ -142,7 +143,7 @@ module.exports = {
       extractFlashMessages('success'),
       extractFlashMessages('error'),
       (req, res, next) => {
-        Post.findByObjId(req.params.postid)
+        Post.findByShortId(req.params.postid)
           .populate('board')
           .then((post) => {
             res.render('pages/post/index', {
