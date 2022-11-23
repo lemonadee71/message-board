@@ -202,7 +202,6 @@ module.exports = {
       (req, res) => {
         res.render('pages/board/join_form', {
           boardname: req.params.boardname,
-          is_current_user_member: req.user?.isMember(req.params.boardname),
         });
       },
     ],
@@ -226,6 +225,7 @@ module.exports = {
                 return res.redirect(board.url);
               } catch (err) {
                 res.render('pages/board/join_form', {
+                  boardname: req.params.boardname,
                   messages: createMessages('error', {
                     msg: err.message,
                     param: 'passcode',
@@ -236,7 +236,10 @@ module.exports = {
             .catch(next);
         })
         .ifHasError((errors, req, res) => {
-          res.render('pages/board/join_form', { messages: errors });
+          res.render('pages/board/join_form', {
+            boardname: req.params.boardname,
+            messages: errors,
+          });
         }),
       ifNotFound('pages/board/not_found'),
     ],
