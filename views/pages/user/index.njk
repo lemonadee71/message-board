@@ -1,12 +1,7 @@
+{% extends "layouts/feed.njk" %}
 {% from "components/card.njk" import card %}
 {% from "components/buttons.njk" import get_btn %}
-{% extends "layouts/feed.njk" %}
-
-{% set show_board_only = true %}
-
-{% block no_posts_msg %}
-  You haven't made any posts yet!
-{% endblock %}
+{% from "components/post.njk" import post_card %}
 
 {# TODO: Use fetch instead to prevent reload #}
 
@@ -55,7 +50,21 @@
   </div>
   <template x-if="tab === 'posts'">
     <div class="flex flex-col gap-4">
-      {{ super() }}
+      {% if posts.length %}
+        {% for post in posts %}
+          {% call post_card(post) %}
+          <p class="text-sm text-gray-500 mb-2">
+            Posted in
+            <a class="font-semibold hover:underline" href="/b/{{ post.board }}">/b/{{ post.board }}</a>
+            • {{ post.date_created | formatdistance }}
+          </p>
+          {% endcall %}
+        {% endfor %}
+      {% else %}
+        <p class="font-semibold text-center text-gray-700">
+          You haven't made any posts yet!
+        </p>
+      {% endif %}
     </div>
   </template>
   <template x-if="tab === 'boards'">

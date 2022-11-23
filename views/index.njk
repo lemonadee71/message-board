@@ -1,7 +1,25 @@
-{% set title = "Home" %}
-{% set show_board_only = true %}
-{% from "components/card.njk" import card %}
 {% extends "layouts/feed.njk" %}
+{% from "components/card.njk" import card %}
+{% from "components/post.njk" import post_card %}
+
+{% set title = "Home" %}
+
+{% block left_column %}
+  {% if posts.length %}
+    {% for post in posts %}
+      {% call post_card(post) %}
+      <p class="text-sm text-gray-500 mb-2">
+        Posted in
+        <a class="font-semibold hover:underline" href="/b/{{ post.board }}">/b/{{ post.board }}</a>
+      </p>
+      {% endcall %}
+    {% endfor %}
+  {% else %}
+    <p class="font-semibold text-center text-gray-700">
+      This board doesn't have any posts yet
+    </p>
+  {% endif %}
+{% endblock %}
 
 {% block right_column %}
   {% call card('Boards') %}

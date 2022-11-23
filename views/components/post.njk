@@ -1,28 +1,21 @@
-{% set show = true %}
-{% if post.private %}
-  {% if not is_current_user_member %}
-    {% set show = false %}
-  {% endif %}
-{% endif %}
-
-{% if show %}
-  <div class="bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500" data-href="{{ post.url }}" @click="window.location.assign($el.dataset.href)">
-    <p class="text-sm text-gray-500 mb-2">
-      {% if show_board_only %}
-        Posted in
-        <a class="font-semibold hover:underline" href="/b/{{ post.board }}">/b/{{ post.board }}</a>
-      {% elif not (current_user and is_current_user_member) %}
-        Posted by
-        <span>&block;&block;&block;&block;&block;</span>
-      {% else %}
-        Posted by
-        <a class="hover:underline" href="/u/{{ post.author }}">u/{{ post.author }}</a>
-        • {{ post.date_created | formatdistance }}
-      {% endif %}
-    </p>
+{% macro post_card(data) %}
+  <div class="bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500" data-href="{{ data.url }}" @click="window.location.assign($el.dataset.href)">
+    {{ caller() }}
     <div class="prose prose-sm line-clamp-6 max-w-none">
-      <h1>{{ post.title }}</h1>
-      {{ post.body | makehtml | safe }}
+      <h1>{{ data.title }}</h1>
+      {{ data.body | makehtml | safe }}
     </div>
   </div>
-{% endif %}
+{% endmacro %}
+
+{% macro post_header(data, censor=false) %}
+  <p class="text-sm text-gray-500 mb-2">
+    Posted by
+    {% if censor %}
+      <span>&block;&block;&block;&block;&block;</span>
+    {% else %}
+      <a class="hover:underline" href="/u/{{ data.author }}">u/{{ data.author }}</a>
+      • {{ data.date_created | formatdistance }}
+    {% endif %}
+  </p>
+{% endmacro %}

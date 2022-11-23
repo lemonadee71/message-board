@@ -1,4 +1,5 @@
 {% extends "layouts/main.njk" %}
+{% from "components/post.njk" import post_card, post_header %}
 
 {% block head %}
   <script defer="defer" src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -19,13 +20,13 @@
         {% block left_column %}
           {% if posts.length %}
             {% for post in posts %}
-              {% include "components/post.njk" %}
+              {% call post_card(post) %}
+              {{ post_header(post, censor=not(current_user and is_current_user_member)) }}
+              {% endcall %}
             {% endfor %}
           {% else %}
             <p class="font-semibold text-center text-gray-700">
-              {% block no_posts_msg %}
-                This board doesn't have any posts yet
-              {% endblock %}
+              This board doesn't have any posts yet
             </p>
           {% endif %}
         {% endblock %}

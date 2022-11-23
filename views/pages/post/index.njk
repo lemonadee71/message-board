@@ -1,5 +1,6 @@
 {% extends "layouts/main.njk" %}
 {% from "components/buttons.njk" import get_btn, post_btn %}
+{% from "components/post.njk" import post_header %}
 
 {% block head %}
   <script>
@@ -43,15 +44,7 @@
         {% endif %}
       </div>
       <div class="bg-white rounded-md px-10 py-4">
-        <p class="text-sm text-gray-500 mb-2">
-          Posted by
-          {% if current_user and is_current_user_member %}
-            <a class="hover:underline" href="/u/{{ post.author }}">u/{{ post.author }}</a>
-            • {{ post.date_created | formatdistance }}
-          {% else %}
-            <span>&block;&block;&block;&block;&block;</span>
-          {% endif %}
-        </p>
+        {{ post_header(post, censor=not(current_user and is_current_user_member)) }}
         <div class="prose">
           <h1>{{ post.title }}</h1>
           {{ post.body | makehtml | safe }}
