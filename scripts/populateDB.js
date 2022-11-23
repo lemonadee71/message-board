@@ -4,11 +4,11 @@ const User = require('../models/user');
 const Board = require('../models/board');
 const Post = require('../models/post');
 
-const createFakePosts = (n, author, board) =>
+const createFakePosts = (n, author, board, isprivate = false) =>
   new Array(n).fill().map(() => ({
     author,
     board,
-    private: false,
+    private: isprivate,
     title: faker.random.words(),
     body: faker.hacker.phrase(),
   }));
@@ -53,6 +53,6 @@ module.exports = async () => {
     ...createFakePosts(4, 'user', 'playground'),
     ...createFakePosts(2, 'admin', 'top'),
     ...createFakePosts(2, 'lemon', 'top'),
-    ...createFakePosts(2, 'admin', 'private'),
+    ...createFakePosts(2, 'admin', 'private', true),
   ]);
 };
