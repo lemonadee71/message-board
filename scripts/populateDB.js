@@ -15,26 +15,44 @@ const createFakePosts = (n, author, board) =>
 
 module.exports = async () => {
   await User.create([
-    { username: 'admin', password: 'admin', boards: ['top'] },
+    {
+      username: 'admin',
+      password: 'admin',
+      boards: ['playground', 'top', 'private'],
+    },
     { username: 'lemon', password: '1234', boards: ['top'] },
-    { username: 'user', password: '1234', boards: ['test', 'top'] },
+    { username: 'user', password: '1234', boards: ['playground'] },
   ]);
 
   await Board.create([
-    { boardname: 'test', creator: 'user', passcode: 'test', private: false },
+    {
+      boardname: 'playground',
+      description: 'A place to test this website. Passcode is `dev`.',
+      passcode: 'dev',
+      private: false,
+      creator: 'admin',
+    },
     {
       boardname: 'top',
       display_name: 'The Odin Project',
-      description: 'Anything related to The Odin Project can be posted here',
+      description:
+        'Anything related to The Odin Project can be posted here. Use passcode `dev` to join.',
       passcode: 'top',
       private: false,
+      creator: 'admin',
+    },
+    {
+      boardname: 'private',
+      passcode: '1234',
+      private: true,
       creator: 'admin',
     },
   ]);
 
   await Post.create([
-    ...createFakePosts(4, 'user', 'test'),
-    ...createFakePosts(2, 'user', 'top'),
+    ...createFakePosts(4, 'user', 'playground'),
+    ...createFakePosts(2, 'admin', 'top'),
     ...createFakePosts(2, 'lemon', 'top'),
+    ...createFakePosts(2, 'admin', 'private'),
   ]);
 };
