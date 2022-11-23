@@ -1,4 +1,3 @@
-const async = require('async');
 const { body, param } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
 const Board = require('../models/board');
@@ -103,26 +102,28 @@ module.exports = {
       extractFlashMessages('info'),
       extractFlashMessages('success'),
       extractFlashMessages('error'),
-      (req, res, next) => {
-        async.parallel(
-          {
-            board: (callback) =>
-              Board.findByName(req.params.boardname).exec(callback),
-            posts: (callback) =>
-              Post.find({ board: req.params.boardname })
-                .sort({ date_created: 'desc' })
-                .exec(callback),
-          },
-          (err, results) => {
-            if (err) return next(err);
+      async (req, res) => {
+        const board = await Board.findByName(req.params.boardname);
+        res.locals.board = board.toSafeObject();
 
-            res.render('pages/board/index', {
-              board: results.board.toSafeObject(),
-              posts: results.posts.map((post) => post.toSafeObject()),
-              is_current_user_member: req.user?.isMember(results.board.id),
-            });
+        const isUserMember = req.user?.isMember(req.params.boardname);
+        res.locals.is_current_user_member = isUserMember;
+
+        const postsQuery = Post.findByBoard(req.params.boardname).sort({
+          date_created: 'desc',
+        });
+
+        // to prevent unnecessary fetching of data
+        if (board.private) {
+          if (req.user && req.isAuthenticated() && isUserMember) {
+            res.locals.posts = await postsQuery;
           }
-        );
+        } else {
+          if (!isUserMember) postsQuery.where({ private: false });
+          res.locals.posts = await postsQuery;
+        }
+
+        res.render('pages/board/index');
       },
       ifNotFound('pages/board/not_found'),
     ],

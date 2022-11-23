@@ -50,6 +50,7 @@ module.exports = {
           posts: (callback) =>
             Post.findByAuthor(req.params.username)
               .sort({ date_created: 'desc' })
+              .where({ private: false })
               .exec(callback),
         },
         (err, results) => {
