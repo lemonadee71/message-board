@@ -70,4 +70,8 @@ PostSchema.statics.findByAuthor = function (username) {
   return this.find({ author: username });
 };
 
+PostSchema.statics.findByBoard = function (boardname) {
+  return this.find({ board: boardname });
+};
+
 module.exports = mongoose.model('Post', PostSchema);
