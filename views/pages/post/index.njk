@@ -13,7 +13,7 @@
     <div class="container-auto max-w-sm space-y-4 py-4">
       <div class="flex flex-row justify-between">
         <a
-          href="/b/{{ post.board.id }}"
+          href="/b/{{ post.board }}"
           class="inline-flex align-middle font-semibold text-center px-4 py-2 rounded-r-full rounded-l-full shadow-md bg-white
             focus:ring">
           <svg
@@ -33,7 +33,7 @@
             <line x1="5" y1="12" x2="11" y2="6"/>
           </svg>
           <span class="text-lg text-neutral-800">
-            {{ post.board.url }}
+            /b/{{ post.board }}
           </span>
         </a>
         {% if current_user and current_user.id === post.author %}

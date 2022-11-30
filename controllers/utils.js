@@ -1,38 +1,7 @@
+const async = require('async');
 const { validationResult } = require('express-validator');
 const { NotFoundError } = require('../utils');
-
-const ALERT_COLORS = {
-  primary: {
-    background: '#cfe2ff',
-    text: '#084298',
-    border: '#b6d4fe',
-  },
-  secondary: {
-    background: '#353535',
-    text: 'white',
-    border: 'gray',
-  },
-  success: {
-    background: '#d1e7dd',
-    text: '#0f5132',
-    border: '#badbcc',
-  },
-  danger: {
-    background: '#f8d7da',
-    text: '#842029',
-    border: '#f5c2c7',
-  },
-  warning: {
-    background: '#fff3cd',
-    text: '#664d03',
-    border: '#ffecb5',
-  },
-  info: {
-    background: '#cff4fc',
-    text: '#055160',
-    border: '#b6effb',
-  },
-};
+const { paramNameMap, queryMap, ALERT_COLORS } = require('./constants');
 
 const createMessages = (type, items, header) => ({
   header,
@@ -53,6 +22,8 @@ const createMessages = (type, items, header) => ({
     }),
   colors: ALERT_COLORS[type === 'error' ? 'danger' : type],
 });
+
+const hasNoSpace = (value) => !/\s/.test(value);
 
 const extractFlashMessages = (key, type) => (req, res, next) => {
   const messages = [req.flash(key)].flat();
@@ -76,37 +47,85 @@ const ifNotFound = (view) => (err, req, res, next) => {
   next(err);
 };
 
-const hasNoSpace = (value) => !/\s/.test(value);
+const finishValidation = () => {
+  const ifSuccess = [];
+  const ifHasError = [];
 
-const finishValidation = (fn) => {
-  let fnIfSuccess = (req, res, next) => next();
-  if (fn) fnIfSuccess = fn;
-  let fnIfHasError = (_, req, res, next) => next();
-
-  async function cb(req, res, next) {
+  async function middleware(req, res, next) {
     const errors = validationResult(req);
+
     if (errors.isEmpty()) {
-      await fnIfSuccess?.(req, res, next);
+      async.series(
+        ifSuccess.map((fn) => (callback) => fn(req, res, callback)),
+        (err) => {
+          if (err) return next(err);
+          next();
+        }
+      );
     } else {
-      await fnIfHasError?.(
-        createMessages('error', errors.array()),
-        req,
-        res,
-        next
+      const msgs = createMessages('error', errors.array());
+
+      async.series(
+        ifHasError.map((fn) => (callback) => fn(msgs, req, res, callback)),
+        (err) => {
+          if (err) return next(err);
+          next();
+        }
       );
     }
   }
 
-  cb.ifSuccess = (f) => {
-    fnIfSuccess = f;
-    return cb;
+  middleware.ifSuccess = (fn) => {
+    ifSuccess.push(fn);
+    return middleware;
   };
-  cb.ifHasError = (f) => {
-    fnIfHasError = f;
-    return cb;
+  middleware.ifHasError = (fn) => {
+    ifHasError.push(fn);
+    return middleware;
   };
 
-  return cb;
+  return middleware;
+};
+
+const populate = (field, ...options) => {
+  const fields = field.split(' ');
+  const o = {};
+
+  const createTask = (req, param, opts) => {
+    let key = paramNameMap[param];
+    let query = queryMap[param](req.params[param]);
+
+    if (opts.length) {
+      if (typeof opts[0] === 'string') {
+        key = opts[0];
+      } else if (typeof opts[0] === 'function') {
+        query = opts[0](query);
+      } else if (opts.length === 2) {
+        key = opts[0];
+        query = opts[1](query);
+      }
+    }
+
+    o[key] = (cb) => query.exec(cb);
+  };
+
+  return async function fn(req, res, next) {
+    if (fields.length === 1) {
+      createTask(req, fields[0], options);
+    } else {
+      for (const fieldname of fields) {
+        createTask(req, fieldname, options[0]?.[fieldname] ?? []);
+      }
+    }
+
+    async
+      .parallel(o)
+      .then((results) => {
+        req.data = results;
+        next();
+      })
+      .catch(next);
+  };
 };
 
 module.exports = {
@@ -115,4 +134,5 @@ module.exports = {
   hasNoSpace,
   ifNotFound,
   finishValidation,
+  populate,
 };

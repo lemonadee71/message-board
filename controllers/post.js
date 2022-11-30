@@ -1,11 +1,11 @@
 const { body, param } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
-const Board = require('../models/board');
 const Post = require('../models/post');
 const {
   extractFlashMessages,
   ifNotFound,
   finishValidation,
+  populate,
 } = require('./utils');
 
 module.exports = {
@@ -13,16 +13,13 @@ module.exports = {
     get: [
       isLoggedIn,
       param('boardname').escape(),
-      (req, res, next) => {
-        Board.findByName(req.params.boardname)
-          .then((board) => {
-            res.render('pages/board/create_post_form', {
-              title: 'Create post',
-              action: `${board.url}/post`,
-              board,
-            });
-          })
-          .catch(next);
+      populate('boardname'),
+      (req, res) => {
+        res.render('pages/board/create_post_form', {
+          title: 'Create post',
+          action: `${req.data.board.url}/post`,
+          board: req.data.board,
+        });
       },
     ],
     post: [
@@ -37,55 +34,47 @@ module.exports = {
       body('body').trim(),
       body('private').optional({ checkFalsy: true }).toBoolean(),
       param('boardname').escape(),
+      populate('boardname'),
       finishValidation()
         .ifSuccess(async (req, res) => {
-          const board = await Board.findByName(req.params.boardname);
           const post = new Post({
             author: req.user.username,
-            board: board.boardname,
+            board: req.data.board.boardname,
             title: req.body.title,
             body: req.body.body,
-            private: board.private ? true : !!req.body.private,
+            private: req.data.board.private ? true : !!req.body.private,
           });
           await post.save();
 
           res.redirect(post.url);
         })
-        .ifHasError((errors, req, res, next) => {
-          Board.findByName(req.params.boardname)
-            .then((board) => {
-              res.render('pages/board/create_post_form', {
-                title: 'Create post',
-                action: `${board.url}/post`,
-                board,
-                messages: errors,
-              });
-            })
-            .catch(next);
+        .ifHasError((errors, req, res) => {
+          res.render('pages/board/create_post_form', {
+            title: 'Create post',
+            action: `${req.data.board.url}/post`,
+            board: req.data.board,
+            messages: errors,
+          });
         }),
     ],
   },
   edit: {
     get: [
       isLoggedIn,
-      (req, res, next) => {
-        Post.findByShortId(req.params.postid)
-          .populate('board')
-          .then((post) => {
-            if (req.user.id === post.author) {
-              res.render('pages/board/create_post_form', {
-                title: 'Update post',
-                action: `${post.shorturl}/edit`,
-                // do not escape to show original input
-                post: post.toObject({ virtuals: true }),
-                board: post.board,
-              });
-            } else {
-              req.flash('error', 'Invalid action');
-              res.redirect(post.url);
-            }
-          })
-          .catch(next);
+      populate('postid', (query) => query.populate('board')),
+      (req, res) => {
+        if (req.user.id === req.data.post.author) {
+          res.render('pages/board/create_post_form', {
+            title: 'Update post',
+            action: `${req.data.post.shorturl}/edit`,
+            // do not escape to show original input
+            post: req.data.post.toObject({ virtuals: true }),
+            board: req.data.post.board,
+          });
+        } else {
+          req.flash('error', 'Invalid action');
+          res.redirect(req.data.post.url);
+        }
       },
       ifNotFound('pages/post/not_found'),
     ],
@@ -101,23 +90,17 @@ module.exports = {
       body('body').trim(),
       body('private').optional({ checkFalsy: true }).toBoolean(),
       finishValidation()
-        .ifSuccess(async (req, res, next) => {
-          try {
-            const post = await Post.findByShortId(req.params.postid).populate(
-              'board'
-            );
-            Object.assign(post, {
-              title: req.body.title,
-              body: req.body.body,
-              private: post.board.private ? true : !!req.body.private,
-            });
-            await post.save();
+        .ifSuccess(populate('postid', (query) => query.populate('board')))
+        .ifSuccess(async (req, res) => {
+          Object.assign(req.data.post, {
+            title: req.body.title,
+            body: req.body.body,
+            private: req.data.post.board.private ? true : !!req.body.private,
+          });
+          await req.data.post.save();
 
-            req.flash('success', 'Post updated');
-            res.redirect(post.url);
-          } catch (err) {
-            next(err);
-          }
+          req.flash('success', 'Post updated');
+          res.redirect(req.data.post.url);
         })
         .ifHasError((errors, req, res) => {
           res.render('pages/board/create_post_form', {
@@ -142,16 +125,12 @@ module.exports = {
     get: [
       extractFlashMessages('success'),
       extractFlashMessages('error'),
-      (req, res, next) => {
-        Post.findByShortId(req.params.postid)
-          .populate('board')
-          .then((post) => {
-            res.render('pages/post/index', {
-              post: post.toSafeObject(),
-              is_current_user_member: req.user?.isMember(post.board.id),
-            });
-          })
-          .catch(next);
+      populate('postid'),
+      (req, res) => {
+        res.render('pages/post/index', {
+          post: req.data.post.toSafeObject(),
+          is_current_user_member: req.user?.isMember(req.data.post.board),
+        });
       },
       ifNotFound('pages/post/not_found'),
     ],

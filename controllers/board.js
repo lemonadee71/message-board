@@ -8,6 +8,7 @@ const {
   extractFlashMessages,
   ifNotFound,
   finishValidation,
+  populate,
 } = require('./utils');
 
 const validateAndSanitizeBoardData = [
@@ -132,25 +133,22 @@ module.exports = {
     get: [
       isLoggedIn,
       param('boardname').toLowerCase().escape(),
-      (req, res, next) => {
-        Board.findByName(req.params.boardname)
-          .then((board) => {
-            if (req.user.id === board.creator) {
-              res.render('pages/board/create_form', {
-                title: 'Update board',
-                mode: 'edit',
-                action: `${board.url}/edit`,
-                board: board.toObject({ virtuals: true }),
-              });
-            } else {
-              req.flash(
-                'error',
-                'Invalid action. Only the creator of this board can edit it.'
-              );
-              res.redirect(board.url);
-            }
-          })
-          .catch(next);
+      populate('boardname'),
+      (req, res) => {
+        if (req.user.id === req.data.board.creator) {
+          res.render('pages/board/create_form', {
+            title: 'Update board',
+            mode: 'edit',
+            action: `${req.data.board.url}/edit`,
+            board: req.data.board.toObject({ virtuals: true }),
+          });
+        } else {
+          req.flash(
+            'error',
+            'Invalid action. Only the creator of this board can edit it.'
+          );
+          res.redirect(req.data.board.url);
+        }
       },
       ifNotFound('pages/board/not_found'),
     ],
@@ -159,21 +157,17 @@ module.exports = {
       param('boardname').toLowerCase().escape(),
       ...validateAndSanitizeBoardData,
       finishValidation()
-        .ifSuccess(async (req, res, next) => {
-          try {
-            const board = await Board.findById(req.params.boardname);
-            Object.assign(board, {
-              display_name: req.body.display_name || undefined,
-              passcode: req.body.passcode || undefined,
-              description: req.body.description,
-              private: !!req.body.private,
-            });
-            await board.save();
+        .ifSuccess(populate('boardname'))
+        .ifSuccess(async (req, res) => {
+          Object.assign(req.data.board, {
+            display_name: req.body.display_name || undefined,
+            passcode: req.body.passcode || undefined,
+            description: req.body.description,
+            private: !!req.body.private,
+          });
+          await req.data.board.save();
 
-            res.redirect(board.url);
-          } catch (err) {
-            next(err);
-          }
+          res.redirect(req.data.board.url);
         })
         .ifHasError((errors, req, res) => {
           res.render('pages/board/create_form', {
@@ -216,24 +210,24 @@ module.exports = {
         .isAlphanumeric()
         .withMessage('Input has non-alphanumeric characters'),
       finishValidation()
-        .ifSuccess((req, res, next) => {
-          Board.findByName(req.params.boardname)
-            .then(async (board) => {
-              try {
-                await board.join(req.user, req.body.passcode);
-                req.flash('success', `You successfully joined ${board.url}`);
-                return res.redirect(board.url);
-              } catch (err) {
-                res.render('pages/board/join_form', {
-                  boardname: req.params.boardname,
-                  messages: createMessages('error', {
-                    msg: err.message,
-                    param: 'passcode',
-                  }),
-                });
-              }
-            })
-            .catch(next);
+        .ifSuccess(populate('boardname'))
+        .ifSuccess(async (req, res) => {
+          try {
+            await req.data.board.join(req.user, req.body.passcode);
+            req.flash(
+              'success',
+              `You successfully joined ${req.data.board.url}`
+            );
+            return res.redirect(req.data.board.url);
+          } catch (err) {
+            res.render('pages/board/join_form', {
+              boardname: req.params.boardname,
+              messages: createMessages('error', {
+                msg: err.message,
+                param: 'passcode',
+              }),
+            });
+          }
         })
         .ifHasError((errors, req, res) => {
           res.render('pages/board/join_form', {
