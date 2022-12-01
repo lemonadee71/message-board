@@ -39,6 +39,12 @@
       </button>
       <button
         class="text-lg text-gray-700 tracking-wide"
+        :class="tab === 'comments' && 'font-semibold'"
+        @click="tab = 'comments'">
+        COMMENTS
+      </button>
+      <button
+        class="text-lg text-gray-700 tracking-wide"
         :class="tab === 'boards' && 'font-semibold'"
         @click="tab = 'boards'">
         BOARDS
@@ -63,6 +69,36 @@
       {% else %}
         <p class="font-semibold text-center text-gray-700">
           You haven't made any posts yet!
+        </p>
+      {% endif %}
+    </div>
+  </template>
+  <template x-if="tab === 'comments'">
+    <div class="flex flex-col gap-4">
+      {% if comments.length %}
+        {% for comment in comments %}
+          <div class="bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500">
+            <p class="text-xs text-gray-500 mb-1">
+              Commented on
+              <a class="text-black" href="{{ comment.post.url }}">{{ comment.post.title }}</a>
+              •
+              <a class="font-semibold hover:underline" href="/b/{{ comment.post.board }}">/b/{{ comment.post.board }}</a>
+              • Posted by
+              <a class="hover:underline" href="/u/{{ comment.post.author }}">
+                u/{{ comment.post.author }}
+              </a>
+            </p>
+            <p class="text-sm text-gray-500 mb-2">
+              Posted {{ comment.date_created | formatdistance }} ago
+            </p>
+            <div class="prose prose-sm line-clamp-6 max-w-none">
+              {{ comment.body | makehtml | safe }}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="font-semibold text-center text-gray-700">
+          You haven't made any comments yet!
         </p>
       {% endif %}
     </div>

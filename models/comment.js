@@ -17,7 +17,7 @@ CommentSchema.methods.toSafeObject = function () {
 };
 
 CommentSchema.statics.findByAuthor = function (username) {
-  return this.find({ author: username });
+  return this.find({ author: username }).sort({ date_created: 'desc' });
 };
 
 CommentSchema.statics.findByPost = function (postid) {
