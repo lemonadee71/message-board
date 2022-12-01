@@ -43,13 +43,59 @@
           </div>
         {% endif %}
       </div>
-      <div class="bg-white rounded-md px-10 py-4">
+      <section class="bg-white rounded-md px-10 py-4">
         {{ post_header(post, censor=not(current_user and is_current_user_member)) }}
-        <div class="prose">
+        <div class="prose max-w-none">
           <h1>{{ post.title }}</h1>
           {{ post.body | makehtml | safe }}
         </div>
-      </div>
+      </section>
+      <section class="bg-white px-8 py-6 rounded-md space-y-4">
+        {% if current_user %}
+          {% if is_current_user_member %}
+            <form class="space-y-2" action="{{ post.shorturl }}/comment" method="post">
+              <textarea
+                class="w-full px-4 py-2 text-sm rounded-md border border-solid border-neutral-300"
+                rows="3"
+                name="comment"
+                maxlength="200"
+                required
+                placeholder="What are your thoughts?"></textarea>
+              <button type="submit" class="text-sm font-semibold text-white px-4 py-2 rounded-full bg-blue-600 disabled:text-gray-300 disabled:bg-gray-500" {{ "disabled" if not is_current_user_member }} title="{{ "Become a member of this board to comment" if not is_current_user_member }}">
+                Comment
+              </button>
+            </form>
+          {% else %}
+            <p class="font-semibold text-center text-gray-700">
+              <a class="hover:underline" href="/b/{{ post.board }}/join">Become a member</a>
+              of this board to join the conversation
+            </p>
+          {% endif %}
+        {% else %}
+          <p class="font-semibold text-center text-gray-700">
+            <a class="hover:underline" href="/login">Log in</a>
+            to join the conversation
+          </p>
+        {% endif %}
+        <div class="divide-y-2">
+          {% for comment in comments %}
+            <div class="px-2 py-3">
+              <p class="text-xs text-gray-500 mb-2">
+                Posted by
+                {% if is_current_user_member %}
+                  <a class="hover:underline" href="/u/{{ comment.author }}">u/{{ comment.author }}</a>
+                {% else %}
+                  <span>&block;&block;&block;&block;&block;</span>
+                {% endif %}
+                • {{ comment.date_created | formatdistance }}
+              </p>
+              <div class="prose prose-sm max-w-none">
+                {{ comment.body | makehtml(3) | safe }}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
     </div>
   </div>
 {% endblock %}

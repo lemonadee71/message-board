@@ -1,6 +1,7 @@
 const { body, param } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
 const Post = require('../models/post');
+const Comment = require('../models/comment');
 const {
   extractFlashMessages,
   ifNotFound,
@@ -122,13 +123,17 @@ module.exports = {
     },
   ],
   page: {
+    // TODO: Do not fetch if non-member and post is private
     get: [
       extractFlashMessages('success'),
       extractFlashMessages('error'),
       populate('postid'),
-      (req, res) => {
+      async (req, res) => {
+        const comments = await Comment.findByPost(req.data.post.id);
+
         res.render('pages/post/index', {
           post: req.data.post.toSafeObject(),
+          comments: comments.map((o) => o.toSafeObject()),
           is_current_user_member: req.user?.isMember(req.data.post.board),
         });
       },
