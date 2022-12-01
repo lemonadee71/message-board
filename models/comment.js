@@ -1,13 +1,13 @@
 const escapeHtml = require('escape-html');
 const mongoose = require('mongoose');
-const { Timestamp } = require('./utils');
+const { Timestamp, ObjectId } = require('./utils');
 
 const Schema = mongoose.Schema;
 
 const CommentSchema = new Schema({
   author: { type: String, ref: 'User', required: true },
   board: { type: String, ref: 'Board', required: true },
-  post: { type: String, ref: 'Post', required: true },
+  post: { type: ObjectId, ref: 'Post', required: true },
   body: { type: String, trim: true, get: escapeHtml },
   date_created: Timestamp,
 });
@@ -21,7 +21,7 @@ CommentSchema.statics.findByAuthor = function (username) {
 };
 
 CommentSchema.statics.findByPost = function (postid) {
-  return this.find({ post: postid });
+  return this.find({ post: postid }).sort({ date_created: 'asc' });
 };
 
 module.exports = mongoose.model('Comment', CommentSchema);
