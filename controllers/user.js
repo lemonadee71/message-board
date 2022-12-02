@@ -39,7 +39,7 @@ module.exports = {
             posts: results.posts.map((post) => post.toSafeObject()),
             comments: results.comments.map((comment) => comment.toSafeObject()),
             boards: results.boards.map((board) => board.toSafeObject()),
-            global_state: "{ tab: 'posts' }",
+            global_state: "{ tab: $persist('posts') }",
           });
         }
       );
