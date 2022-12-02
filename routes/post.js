@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get('/:postid', postController.page.get);
 router.get('/:postid/edit', postController.edit.get);
+router.get('/:postid/comment/:commentid', commentController.index);
 router.get('/:postid/:slug', postController.page.get);
 router.post('/:postid/edit', postController.edit.post);
 router.post('/:postid/delete', postController.delete);

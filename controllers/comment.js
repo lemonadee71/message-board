@@ -1,21 +1,34 @@
 const { body } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
 const Comment = require('../models/comment');
-const { finishValidation, populate } = require('./utils');
+const { NotFoundError } = require('../utils');
+const { finishValidation, populate, ifNotFound } = require('./utils');
 
 module.exports = {
+  index: [
+    populate('postid commentid', {
+      commentid: (query) => query.orFail(new NotFoundError()),
+    }),
+    (req, res) => {
+      res.render('pages/post/comment', {
+        post: req.data.post.toSafeObject(),
+        comment: req.data.comment.toSafeObject(),
+        is_current_user_member: req.user?.isMember(req.data.post.board),
+      });
+    },
+    ifNotFound('pages/post/not_found'),
+  ],
   create: [
     isLoggedIn,
     body('comment').trim(),
     populate('postid'),
     finishValidation().ifSuccess(async (req, res) => {
-      const comment = new Comment({
+      await new Comment({
         author: req.user,
         board: req.data.post.board,
         post: req.data.post.id,
         body: req.body.comment,
-      });
-      await comment.save();
+      }).save();
 
       const comments = await Comment.findByPost(req.data.post.id);
 
@@ -26,6 +39,14 @@ module.exports = {
       });
     }),
   ],
+  // edit: {
+  //   get: [
+  //     isLoggedIn,
+  //     populate('commentid'),
+  //     (req, res) =>
+  //   ],
+  // }
+  // ,
   delete: [
     isLoggedIn,
     populate('commentid'),

@@ -78,13 +78,14 @@
       {% if comments.length %}
         {% for comment in comments %}
           <div
-            class="relative group bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500">
+            class="relative group bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500"
+            @click="window.location.assign('{{ comment.post.shorturl }}/comment/{{ comment.id }}')">
             {# BUG: Sometimes it takes two clicks to register #}
             <div class="flex flex-row space-x-4">
               <button
                 title="Delete comment"
                 class="absolute invisible p-1 rounded-md danger top-2 right-2 focus:ring group-hover:visible"
-                @click="fetch('/c/{{ comment.id }}', { method: 'DELETE' }).then(res => { window.location = res.url })">
+                @click.stop="fetch('/c/{{ comment.id }}', { method: 'DELETE' }).then(res => { window.location = res.url })">
                 <span class="sr-only">Delete</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
