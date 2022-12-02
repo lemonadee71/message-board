@@ -39,7 +39,7 @@
         {% if current_user and current_user.id === post.author %}
           <div class="flex gap-4">
             {{ get_btn('Edit', post.shorturl + '/edit') }}
-            {{ post_btn('Delete', post.shorturl + '/delete', class='btn--danger') }}
+            {{ post_btn('Delete', post.shorturl + '/delete', class='btn danger') }}
           </div>
         {% endif %}
       </div>

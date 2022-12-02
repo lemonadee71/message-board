@@ -18,9 +18,9 @@
         <div class="flex items-center">
           <form class="mr-2 flex items-center" action="/profile/edit?field=display_name" method="post">
             <input class="font-semibold text-xl px-2 mr-2" type="text" name="display_name" value="{{ current_user.display_name }}" placeholder="Display name"/>
-            <button type="submit" class="btn--primary">Save</button>
+            <button type="submit" class="btn-sm primary">Save</button>
           </form>
-          <button class="btn--danger" @click="editing = false">
+          <button class="btn-sm danger" @click="editing = false">
             Cancel
           </button>
         </div>
@@ -51,7 +51,7 @@
       </button>
     </div>
     <template x-if="tab === 'boards'">
-      {{ get_btn('Create', '/create/board') }}
+      {{ get_btn('Create', '/create/board', class="btn-sm primary") }}
     </template>
   </div>
   <template x-if="tab === 'posts'">
@@ -170,7 +170,7 @@
       <template x-if="editing">
         <form class="space-y-3" action="/profile/edit?field=bio" method="post">
           <textarea class="mt-1 block w-full text-sm" rows="3" name="bio" maxlength="200" placeholder="Tell us about yourself...">{{ current_user.bio }}</textarea>
-          <button type="submit" class="btn--primary">Save</button>
+          <button type="submit" class="btn-sm primary">Save</button>
         </form>
       </template>
       <template x-if="!editing">

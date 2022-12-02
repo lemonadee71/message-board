@@ -12,13 +12,13 @@
       {% if is_current_user_member %}
         <div class="flex space-x-3">
           {% if current_user.username === board.creator %}
-            {{ get_btn('Edit', board.url + '/edit', class="btn--primary-r") }}
+            {{ get_btn('Edit', board.url + '/edit', class="btn-sm border border-solid primary-r") }}
           {% endif %}
-          {{ get_btn('Post', board.url + '/post') }}
-          {{ post_btn('Leave', board.url + '/leave', class='btn--danger') }}
+          {{ get_btn('Post', board.url + '/post', class="btn-sm primary") }}
+          {{ post_btn('Leave', board.url + '/leave', class='btn-sm danger') }}
         </div>
       {% else %}
-        {{ get_btn('Join', board.url + '/join') }}
+        {{ get_btn('Join', board.url + '/join', class="btn-sm primary") }}
       {% endif %}
     </div>
     <p class="font-medium tracking-wide text-lg text-gray-600 self-start">{{ board.url }}</p>

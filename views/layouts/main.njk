@@ -11,7 +11,7 @@
       {% if current_user %}
         {{ post_btn('Logout', '/logout') }}
       {% else %}
-        {{ get_btn('Sign Up', '/signup', class="btn--primary-r") }}
+        {{ get_btn('Sign Up', '/signup', class="btn border border-solid primary-r") }}
         {{ get_btn('Login', '/login') }}
       {% endif %}
     </div>
