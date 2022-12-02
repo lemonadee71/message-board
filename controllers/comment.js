@@ -26,4 +26,17 @@ module.exports = {
       });
     }),
   ],
+  delete: [
+    isLoggedIn,
+    populate('commentid'),
+    (req, res) => {
+      if (req.user.username === req.data.comment.author) {
+        Comment.findByIdAndDelete(req.data.comment.id).then(() => {
+          // SEE: https://stackoverflow.com/questions/65444011/page-not-refreshing-after-res-redirect303-done-after-delete-request
+          // Solution results in two get requests
+          res.redirect(303, 'back');
+        });
+      }
+    },
+  ],
 };
