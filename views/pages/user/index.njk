@@ -81,10 +81,28 @@
             class="relative group bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500"
             @click="window.location.assign('{{ comment.post.shorturl }}/comment/{{ comment.id }}')">
             {# BUG: Sometimes it takes two clicks to register #}
-            <div class="flex flex-row space-x-4">
+            <div class="absolute flex flex-row space-x-1 top-2 right-2 invisible group-hover:visible">
+              <a title="Edit comment" class="p-1 rounded-md primary top-2 right-2 focus:ring" href="{{ comment.post.shorturl }}/comment/{{ comment.id }}?edit">
+                <span class="sr-only">Edit</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="stroke-white"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="#ffffff"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"/>
+                  <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"/>
+                </svg>
+              </a>
               <button
                 title="Delete comment"
-                class="absolute invisible p-1 rounded-md danger top-2 right-2 focus:ring group-hover:visible"
+                class="p-1 rounded-md danger top-2 right-2 focus:ring"
                 @click.stop="fetch('/c/{{ comment.id }}', { method: 'DELETE' }).then(res => { window.location = res.url })">
                 <span class="sr-only">Delete</span>
                 <svg

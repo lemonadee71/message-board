@@ -2,6 +2,10 @@
 {% from "components/buttons.njk" import get_btn, post_btn %}
 {% from "components/post.njk" import post_header %}
 
+{% block head %}
+  <script defer="defer" src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+{% endblock %}
+
 {% block main %}
   <div class="h-full bg-neutral-200">
     <div class="container-auto max-w-sm space-y-4 py-4">

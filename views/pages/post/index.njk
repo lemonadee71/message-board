@@ -17,7 +17,7 @@
           maxlength="200"
           required
           placeholder="What are your thoughts?"></textarea>
-        <button type="submit" class="text-sm font-semibold text-white px-4 py-2 rounded-full bg-blue-600 disabled:text-gray-300 disabled:bg-gray-500" {{ "disabled" if not is_current_user_member }} title="{{ "Become a member of this board to comment" if not is_current_user_member }}">
+        <button type="submit" class="btn-sm primary disabled:text-gray-300 disabled:bg-gray-500" {{ "disabled" if not is_current_user_member }} title="{{ "Become a member of this board to comment" if not is_current_user_member }}">
           Comment
         </button>
       </form>

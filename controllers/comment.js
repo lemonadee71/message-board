@@ -2,19 +2,39 @@ const { body } = require('express-validator');
 const { isLoggedIn } = require('../middlewares/authentication');
 const Comment = require('../models/comment');
 const { NotFoundError } = require('../utils');
-const { finishValidation, populate, ifNotFound } = require('./utils');
+const {
+  finishValidation,
+  populate,
+  ifNotFound,
+  createMessages,
+  extractFlashMessages,
+} = require('./utils');
 
 module.exports = {
+  // TODO: Do not proceed if post is private
   index: [
+    extractFlashMessages('success'),
+    extractFlashMessages('error'),
     populate('postid commentid', {
       commentid: (query) => query.orFail(new NotFoundError()),
     }),
     (req, res) => {
-      res.render('pages/post/comment', {
-        post: req.data.post.toSafeObject(),
-        comment: req.data.comment.toSafeObject(),
-        is_current_user_member: req.user?.isMember(req.data.post.board),
-      });
+      const willEdit = 'edit' in req.query;
+
+      res.locals.post = req.data.post.toSafeObject();
+      res.locals.comment = req.data.comment.toObject({ virtuals: true });
+      res.locals.is_current_user_member = req.user?.isMember(
+        req.data.post.board
+      );
+
+      res.locals.is_editing = willEdit;
+
+      if (willEdit && req.user.username !== req.data.comment.author) {
+        res.locals.is_editing = false;
+        res.locals.messages = createMessages('error', null, 'Invalid action');
+      }
+
+      res.render('pages/post/comment');
     },
     ifNotFound('pages/post/not_found'),
   ],
@@ -39,14 +59,18 @@ module.exports = {
       });
     }),
   ],
-  // edit: {
-  //   get: [
-  //     isLoggedIn,
-  //     populate('commentid'),
-  //     (req, res) =>
-  //   ],
-  // }
-  // ,
+  edit: [
+    isLoggedIn,
+    body('comment').trim(),
+    populate('commentid'),
+    async (req, res) => {
+      req.data.comment.body = req.body.comment;
+      await req.data.comment.save();
+
+      req.flash('success', 'Comment updated');
+      res.redirect(new URL(req.get('referer')).pathname);
+    },
+  ],
   delete: [
     isLoggedIn,
     populate('commentid'),
