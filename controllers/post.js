@@ -114,12 +114,13 @@ module.exports = {
       ifNotFound('pages/post/not_found'),
     ],
   },
-  delete: [
+  // Quick hack so this can be used by two different routes
+  delete: (callback) => [
     isLoggedIn,
     (req, res) => {
-      Post.findOneAndDelete({ shortid: req.params.postid }).then((post) => {
-        res.redirect(`/b/${post.board}`);
-      });
+      Post.findOneAndDelete({ shortid: req.params.postid }).then(
+        callback(req, res)
+      );
     },
   ],
   page: {

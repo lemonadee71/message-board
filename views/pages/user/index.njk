@@ -2,6 +2,7 @@
 {% from "components/card.njk" import card %}
 {% from "components/buttons.njk" import get_btn %}
 {% from "components/post.njk" import post_card %}
+{% from "components/controls.njk" import basic_controls %}
 
 {# TODO: Use fetch instead to prevent reload #}
 
@@ -64,6 +65,8 @@
             <a class="font-semibold hover:underline" href="/b/{{ post.board }}">/b/{{ post.board }}</a>
             • {{ post.date_created | formatdistance }}
           </p>
+
+          {{ basic_controls(edit_action=post.shorturl + '/edit', delete_action="$store.fetch.delete('" + post.shorturl + "')") }}
           {% endcall %}
         {% endfor %}
       {% else %}
@@ -80,52 +83,8 @@
           <div
             class="relative group bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500"
             @click="window.location.assign('{{ comment.post.shorturl }}/comment/{{ comment.id }}')">
-            {# BUG: Sometimes it takes two clicks to register #}
-            <div class="absolute flex flex-row space-x-1 top-2 right-2 invisible group-hover:visible">
-              <a title="Edit comment" class="p-1 rounded-md primary top-2 right-2 focus:ring" href="{{ comment.post.shorturl }}/comment/{{ comment.id }}?edit">
-                <span class="sr-only">Edit</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="stroke-white"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="#ffffff"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round">
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                  <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"/>
-                  <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"/>
-                </svg>
-              </a>
-              <button
-                title="Delete comment"
-                class="p-1 rounded-md danger top-2 right-2 focus:ring"
-                @click.stop="fetch('/c/{{ comment.id }}', { method: 'DELETE' }).then(res => { window.location = res.url })">
-                <span class="sr-only">Delete</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="stroke-white"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="#ffffff"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true">
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                  <line x1="4" y1="7" x2="20" y2="7"/>
-                  <line x1="10" y1="11" x2="10" y2="17"/>
-                  <line x1="14" y1="11" x2="14" y2="17"/>
-                  <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/>
-                  <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/>
-                </svg>
-              </button>
-            </div>
+
+            {{ basic_controls(edit_action=comment.post.shorturl + "/comment/" + comment.id + "?edit", delete_action="$store.fetch.delete('/c/" + comment.id + "')") }}
 
             <p class="text-xs text-gray-500 mb-1">
               Commented on
