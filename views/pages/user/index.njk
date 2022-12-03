@@ -66,7 +66,7 @@
             • {{ post.date_created | formatdistance }}
           </p>
 
-          {{ basic_controls(edit_action=post.shorturl + '/edit', delete_action="$store.fetch.delete('" + post.shorturl + "')") }}
+          {{ basic_controls(edit_action=post.shorturl + '/edit', delete_action=post.shorturl) }}
           {% endcall %}
         {% endfor %}
       {% else %}
@@ -84,7 +84,7 @@
             class="relative group bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500"
             @click="window.location.assign('{{ comment.post.shorturl }}/comment/{{ comment.id }}')">
 
-            {{ basic_controls(edit_action=comment.post.shorturl + "/comment/" + comment.id + "?edit", delete_action="$store.fetch.delete('/c/" + comment.id + "')") }}
+            {{ basic_controls(edit_action=comment.post.shorturl + "/comment/" + comment.id + "?edit=true", delete_action="/c/" + comment.id) }}
 
             <p class="text-xs text-gray-500 mb-1">
               Commented on

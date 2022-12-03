@@ -1,6 +1,9 @@
 {% macro basic_controls(edit_action="", delete_action="") %}
   <div class="absolute flex flex-row space-x-1 top-2 right-2 invisible group-hover:visible">
-    <a title="Edit" class="p-1 rounded-md primary top-2 right-2 focus:ring" href="{{ edit_action }}">
+    <button
+      title="Edit"
+      class="p-1 rounded-md primary top-2 right-2 focus:ring"
+      @click.stop="window.location.assign('{{ edit_action }}')">
       <span class="sr-only">Edit</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -17,8 +20,11 @@
         <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"/>
         <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"/>
       </svg>
-    </a>
-    <button title="Delete" class="p-1 rounded-md danger top-2 right-2 focus:ring" @click.stop="{{ delete_action }}">
+    </button>
+    <button
+      title="Delete"
+      class="p-1 rounded-md danger top-2 right-2 focus:ring"
+      @click.stop="$store.fetch.delete('{{ delete_action }}')">
       <span class="sr-only">Delete</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
