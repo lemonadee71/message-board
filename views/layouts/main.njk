@@ -1,8 +1,9 @@
-{% extends "layouts/base.njk" %}
+{% set base_template = "layouts/base_alpine.njk" if use_alpine else "layouts/base.njk" %}
+
+{% extends base_template %}
 {% from "components/buttons.njk" import get_btn, post_btn %}
 
 {% block body %}
-  {# Header #}
   <header class="flex flex-row justify-between content-center px-8 pt-6 pb-4 shadow-sm border border-solid border-b-gray-200">
     <h1 class="font-bold text-xl align-middle">
       <a href="/">Privvit</a>
@@ -21,7 +22,7 @@
       {% include "components/alert.njk" %}
     {% endif %}
   </section>
-  <main class="h-[calc(100vh-68px)] overflow-scroll" x-data="{{ global_state }}">
+  <main class="h-[calc(100vh-68px)] overflow-scroll">
     {% block main %}{% endblock %}
   </main>
 {% endblock %}

@@ -2,6 +2,15 @@
 {% from "components/buttons.njk" import get_btn, post_btn %}
 {% from "components/card.njk" import card %}
 
+{% block head %}
+  <script>
+    window.history.replaceState(null, '', window
+      .location
+      .pathname
+      .toLowerCase());
+  </script>
+{% endblock %}
+
 {% block subheader %}
   <div class="grid grid-cols-[auto_1fr] grid-rows-2 py-4 px-28">
     <img class="row-span-2 rounded-full h-14 w-14 mr-6 active:ring-teal-500 self-center" src="{{ board.boardname | avatar }}" alt="profile picture"/>

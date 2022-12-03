@@ -1,16 +1,6 @@
+{% set use_alpine = true %}
 {% extends "layouts/main.njk" %}
 {% from "components/post.njk" import post_card, post_header %}
-
-{% block head %}
-  <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
-  <script defer="defer" src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <script>
-    window.history.replaceState(null, '', window
-      .location
-      .pathname
-      .toLowerCase());
-  </script>
-{% endblock %}
 
 {% block main %}
   {% block subheader %}{% endblock %}

@@ -6,6 +6,11 @@
 
 {# TODO: Use fetch instead to prevent reload #}
 
+{% block head %}
+  {{ super() }}
+  <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+{% endblock %}
+
 {% block subheader %}
   <div class="grid grid-cols-[auto_1fr] grid-rows-2 py-4 px-28">
     <img class="row-span-2 rounded-full h-14 w-14 mr-6 active:ring-teal-500 self-center" src="{{ current_user.username | avatar }}" alt="profile picture"/>
