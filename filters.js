@@ -23,12 +23,12 @@ exports.formatDate = (date) => format(date, 'MMM d, y');
 
 exports.formatDistance = (date) => formatDistanceStrict(new Date(), date);
 
-exports.mdToHTML = (str) =>
+exports.mdToHTML = (str, headerLevelStart = 2) =>
   new showdown.Converter({
     omitExtraWLInCodeBlocks: true,
     noHeaderId: true,
     ghCompatibleHeaderId: true,
-    headerLevelStart: 2,
+    headerLevelStart,
     parseImgDimensions: true,
     strikethrough: true,
     tables: true,

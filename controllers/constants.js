@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Post = require('../models/post');
 const Board = require('../models/board');
+const Comment = require('../models/comment');
 
 exports.ALERT_COLORS = {
   primary: {
@@ -39,10 +40,12 @@ exports.paramNameMap = {
   username: 'user',
   boardname: 'board',
   postid: 'post',
+  commentid: 'comment',
 };
 
 exports.queryMap = {
   username: (name) => User.findByName(name),
   boardname: (name) => Board.findByName(name),
   postid: (id) => Post.findByShortId(id),
+  commentid: (id) => Comment.findById(id),
 };

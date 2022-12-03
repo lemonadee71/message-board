@@ -38,6 +38,7 @@ app.use('/', require('./routes/index'));
 app.use('/b', require('./routes/board'));
 app.use('/p', require('./routes/post'));
 app.use('/u', require('./routes/user'));
+app.use('/c', require('./routes/comment'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -1,4 +1,4 @@
-{% macro post_btn(text, action, name, value, class="btn--primary") %}
+{% macro post_btn(text, action, name, value, class="btn primary") %}
   <form action="{{ action }}" method="post">
     <button type="submit" class="{{ class }}" {{ { name: name, value: value } | stringify  }}>
       {{ text }}
@@ -6,7 +6,7 @@
   </form>
 {% endmacro %}
 
-{% macro get_btn(text, action, class="btn--primary") %}
+{% macro get_btn(text, action, class="btn primary") %}
   <a href="{{ action }}" class="{{ class }}">
     {{ text }}
   </a>

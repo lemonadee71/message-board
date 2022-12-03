@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>
+      Privvit {{ '| ' + title if title }}
+    </title>
+    <link rel="stylesheet" href="/stylesheets/vendor.css"> {% block head %}{% endblock %}
+    <script defer="defer" src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+      document.addEventListener('alpine:init', () => {
+        Alpine.store('fetch', {
+          get: (path) => window.location.assign(path),
+          delete: (path) => fetch(path, {method: 'DELETE'}).then(res => {
+            window.location = res.url
+          })
+        })
+      })
+    </script>
+  </head>
+  <body x-data="{{ global_state }}"> {% block body %}{% endblock %}{% block scripts %}{% endblock %}
+    </body>
+  </html>

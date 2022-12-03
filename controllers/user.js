@@ -4,6 +4,7 @@ const { param } = require('express-validator');
 const User = require('../models/user');
 const Board = require('../models/board');
 const Post = require('../models/post');
+const Comment = require('../models/comment');
 const { isLoggedIn } = require('../middlewares/authentication');
 const {
   ifNotFound,
@@ -26,14 +27,19 @@ module.exports = {
             Post.findByAuthor(req.user.username)
               .sort({ date_created: 'desc' })
               .exec(callback),
+          comments: (callback) =>
+            Comment.findByAuthor(req.user.username)
+              .populate('post')
+              .exec(callback),
         },
         (err, results) => {
           if (err) return next(err);
 
           res.render('pages/user/index', {
             posts: results.posts.map((post) => post.toSafeObject()),
+            comments: results.comments.map((comment) => comment.toSafeObject()),
             boards: results.boards.map((board) => board.toSafeObject()),
-            global_state: "{ tab: 'posts' }",
+            global_state: "{ tab: $persist('posts') }",
           });
         }
       );
