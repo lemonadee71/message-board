@@ -1,18 +1,13 @@
+{% extends "layouts/form.njk" %}
 {% from "components/form_controls.njk" import form, input %}
-{% extends "layouts/base.njk" %}
 
-{% block body %}
-  {% if messages %}
-    {% include "components/alert.njk" %}
-  {% endif %}
-  <main class="container-auto">
-    {% call form(title, action) %}
-    {{ input('text', 'title', 'Title', value=post.title, required=true) }}
-    {{ input('textarea', 'body', value=post.body) }}
-    <label class="block">
-      <input type="checkbox" name="private" {{ "disabled" if board.private }} {{ "checked" if board.private else (("checked" if post.private) if post else "checked") }}/>
-      <span class="text-gray-700">Private (posts will be hidden for non-members)</span>
-    </label>
-    {% endcall %}
-  </main>
+{% block form %}
+  {% call form(title, action) %}
+  {{ input('text', 'title', 'Title', value=post.title, required=true) }}
+  {{ input('textarea', 'body', value=post.body) }}
+  <label class="block">
+    <input type="checkbox" name="private" {{ "disabled" if board.private }} {{ "checked" if board.private else (("checked" if post.private) if post else "checked") }}/>
+    <span class="text-gray-700">Private (posts will be hidden for non-members)</span>
+  </label>
+  {% endcall %}
 {% endblock %}

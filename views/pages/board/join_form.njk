@@ -1,14 +1,10 @@
-{% set title = "Join board" %}
+{% extends "layouts/form.njk" %}
 {% from "components/form_controls.njk" import form, input %}
-{% extends "layouts/base.njk" %}
+
+{% set title = "Join board" %}
 
 {% block body %}
-  {% if messages %}
-    {% include "components/alert.njk" %}
-  {% endif %}
-  <main class="container-auto">
-    {% call form('Join /b/' + boardname, '/b/' + boardname + '/join') %}
-    {{ input('password', 'passcode', required=true) }}
-    {% endcall %}
-  </main>
+  {% call form('Join /b/' + boardname, '/b/' + boardname + '/join') %}
+  {{ input('password', 'passcode', required=true) }}
+  {% endcall %}
 {% endblock %}

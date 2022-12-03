@@ -1,17 +1,13 @@
-{% set title = "Sign up" %}
+{% extends "layouts/form.njk" %}
 {% from "components/form_controls.njk" import form, input %}
-{% extends "layouts/base.njk" %}
 
-{% block body %}
-  {% if messages %}
-    {% include "components/alert.njk" %}
-  {% endif %}
-  <main class="container-auto">
-    {% call form(title, '/signup') %}
-    {{ input('text', 'username', required=true, show_required=true) }}
-    {{ input('text', 'display_name', 'Display name') }}
-    {{ input('password', 'password', required=true, show_required=true) }}
-    {{ input('textarea', 'bio') }}
-    {% endcall %}
-  </main>
+{% set title = "Sign up" %}
+
+{% block form %}
+  {% call form(title, '/signup') %}
+  {{ input('text', 'username', required=true, show_required=true) }}
+  {{ input('text', 'display_name', 'Display name') }}
+  {{ input('password', 'password', required=true, show_required=true) }}
+  {{ input('textarea', 'bio') }}
+  {% endcall %}
 {% endblock %}
