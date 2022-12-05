@@ -1,3 +1,4 @@
+const { faker } = require('@faker-js/faker');
 const format = require('date-fns/format');
 const formatDistanceStrict = require('date-fns/formatDistanceStrict');
 const showdown = require('showdown');
@@ -41,3 +42,6 @@ exports.mdToHTML = (str, headerLevelStart = 2) =>
     backslashEscapesHTMLTags: true,
     emoji: true,
   }).makeHtml(str);
+
+exports.lorem = (str) =>
+  str.replace(/\w+/g, (match) => faker.lorem.word(match.length));

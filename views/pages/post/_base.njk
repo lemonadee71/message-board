@@ -41,7 +41,9 @@
         {{ post_header(post, censor=not(current_user and is_current_user_member)) }}
         <div class="prose max-w-none">
           <h1>{{ post.title }}</h1>
-          {{ post.body | makehtml | safe }}
+          <div class="{{ " content-blur line-clamp-4" if post.private and not is_current_user_member }}">
+            {{ ((post.body | lorem) if post.private and not is_current_user_member else post.body) | makehtml | safe }}
+          </div>
         </div>
       </section>
       <section class="bg-white px-8 py-6 rounded-md space-y-4">

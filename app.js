@@ -24,6 +24,7 @@ env.addFilter('avatar', filters.createAvatar);
 env.addFilter('formatdate', filters.formatDate);
 env.addFilter('formatdistance', filters.formatDistance);
 env.addFilter('makehtml', filters.mdToHTML);
+env.addFilter('lorem', filters.lorem);
 
 app.use(logger('dev'));
 app.use(express.json());

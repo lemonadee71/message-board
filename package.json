@@ -13,6 +13,7 @@
     "start:dev": "concurrently --kill-others -c green,cyan -n server,tailwind \"npm run watch\" \"npm run tailwind:watch\""
   },
   "dependencies": {
+    "@faker-js/faker": "^7.6.0",
     "async": "^3.2.4",
     "bcryptjs": "^2.4.3",
     "connect-flash": "^0.1.1",
@@ -34,7 +35,6 @@
     "slugify": "^1.6.5"
   },
   "devDependencies": {
-    "@faker-js/faker": "^7.6.0",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/line-clamp": "^0.4.2",
     "@tailwindcss/typography": "^0.5.7",

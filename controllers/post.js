@@ -124,18 +124,21 @@ module.exports = {
     },
   ],
   page: {
-    // TODO: Do not fetch if non-member and post is private
     get: [
       extractFlashMessages('success'),
       extractFlashMessages('error'),
       populate('postid'),
       async (req, res) => {
-        const comments = await Comment.findByPost(req.data.post.id);
+        const isMember = req.user?.isMember(req.data.post.board);
+
+        if (!req.data.post.private || isMember) {
+          const comments = await Comment.findByPost(req.data.post.id);
+          res.locals.comments = comments.map((o) => o.toSafeObject());
+        }
 
         res.render('pages/post/index', {
           post: req.data.post.toSafeObject(),
-          comments: comments.map((o) => o.toSafeObject()),
-          is_current_user_member: req.user?.isMember(req.data.post.board),
+          is_current_user_member: isMember,
         });
       },
       ifNotFound('pages/post/not_found'),

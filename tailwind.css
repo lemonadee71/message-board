@@ -13,6 +13,12 @@
 }
 
 @layer utilities {
+  .content-blur {
+    filter: blur(4px);
+    user-select: none;
+    pointer-events: none;
+  }
+
   .container-auto {
     @apply container mx-auto lg:max-w-5xl;
   }

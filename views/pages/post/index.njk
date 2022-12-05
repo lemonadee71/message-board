@@ -33,22 +33,24 @@
       to join the conversation
     </p>
   {% endif %}
-  <div class="divide-y-2">
-    {% for comment in comments %}
-      <div class="px-2 py-3">
-        <p class="text-xs text-gray-500 mb-2">
-          Posted by
-          {% if is_current_user_member %}
-            <a class="hover:underline" href="/u/{{ comment.author }}">u/{{ comment.author }}</a>
-          {% else %}
-            <span>&block;&block;&block;&block;&block;</span>
-          {% endif %}
-          • {{ comment.date_created | formatdistance }}
-        </p>
-        <div class="prose prose-sm max-w-none">
-          {{ comment.body | makehtml(3) | safe }}
+  {% if comments %}
+    <div class="divide-y-2">
+      {% for comment in comments %}
+        <div class="px-2 py-3">
+          <p class="text-xs text-gray-500 mb-2">
+            Posted by
+            {% if is_current_user_member %}
+              <a class="hover:underline" href="/u/{{ comment.author }}">u/{{ comment.author }}</a>
+            {% else %}
+              <span>&block;&block;&block;&block;&block;</span>
+            {% endif %}
+            • {{ comment.date_created | formatdistance }}
+          </p>
+          <div class="prose prose-sm max-w-none">
+            {{ comment.body | makehtml(3) | safe }}
+          </div>
         </div>
-      </div>
-    {% endfor %}
-  </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 {% endblock %}
