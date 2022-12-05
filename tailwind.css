@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply box-border h-fit font-semibold text-center rounded-lg px-4 py-2 border border-solid border-transparent focus:ring;
+  }
+
+  .btn-sm {
+    @apply box-border h-fit text-sm font-semibold text-center rounded-md px-3 py-1 border border-solid border-transparent focus:ring;
+  }
+}
+
+@layer utilities {
+  .container-auto {
+    @apply container mx-auto lg:max-w-5xl;
+  }
+
+  .primary {
+    @apply text-white bg-blue-600;
+  }
+
+  .primary-r {
+    @apply text-blue-600 bg-white border-blue-600;
+  }
+
+  .danger {
+    @apply text-white bg-red-600 focus:ring-red-300;
+  }
+}
