@@ -85,21 +85,24 @@
     <div class="flex flex-col gap-4">
       {% if comments.length %}
         {% for comment in comments %}
+          {% set post_url = comment.post.shorturl if comment.post else "/p/deleted" %}
           <div
             class="relative group bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500"
-            @click="window.location.assign('{{ comment.post.shorturl }}/comment/{{ comment.id }}')">
+            @click="window.location.assign('{{ post_url }}/comment/{{ comment.id }}')">
 
-            {{ basic_controls(edit_action=comment.post.shorturl + "/comment/" + comment.id + "?edit=true", delete_action="/c/" + comment.id) }}
+            {{ basic_controls(edit_action=post_url + "/comment/" + comment.id + "?edit=true", delete_action="/c/" + comment.id) }}
 
             <p class="text-xs text-gray-500 mb-1">
               Commented on
-              <a class="text-black" href="{{ comment.post.url }}">{{ comment.post.title }}</a>
+              <a class="text-black" href="{{ post_url }}">{{ comment.post.title if comment.post else "[deleted]" }}</a>
               •
-              <a class="font-semibold hover:underline" href="/b/{{ comment.post.board }}">/b/{{ comment.post.board }}</a>
-              • Posted by
-              <a class="hover:underline" href="/u/{{ comment.post.author }}">
-                u/{{ comment.post.author }}
-              </a>
+              <a class="font-semibold hover:underline" href="/b/{{ comment.post.board if comment.post else comment.board }}">/b/{{ comment.post.board if comment.post else comment.board }}</a>
+              {% if comment.post %}
+                • Posted by
+                <a class="hover:underline" href="/u/{{ comment.post.author }}">
+                  u/{{ comment.post.author }}
+                </a>
+              {% endif %}
             </p>
             <p class="text-sm text-gray-500 mb-2">
               Posted {{ comment.date_created | formatdistance }} ago
