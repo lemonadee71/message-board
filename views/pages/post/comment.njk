@@ -2,64 +2,90 @@
 {% extends "pages/post/_base.njk" %}
 
 {% block secondary_content %}
-  <div class="space-y-2" x-data="{ editing: {{ is_editing }} }">
-    <a href="{{ post.url }}" class="group inline-flex align-middle font-semibold">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="icon icon-tabler icon-tabler-arrow-left"
-        width="26"
-        height="26"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="#2c3e50"
-        fill="none"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-        <line x1="5" y1="12" x2="19" y2="12"/>
-        <line x1="5" y1="12" x2="11" y2="18"/>
-        <line x1="5" y1="12" x2="11" y2="6"/>
-      </svg>
-      <span class="text-neutral-800 group-hover:underline">
-        Read all comments
-      </span>
-    </a>
+  {% if not_found %}
+    <div class="space-y-2">
+      {{ read_all_btn(post) }}
 
-    <template x-if="editing">
-      <form class="space-y-2" action="/c/{{ comment.id }}/edit" method="post">
-        <textarea
-          class="w-full px-4 py-2 text-sm rounded-md border border-solid border-neutral-300"
-          rows="3"
-          name="comment"
-          maxlength="200"
-          required
-          placeholder="What are your thoughts?">{{ comment.body }}</textarea>
-        <button type="submit" class="btn-sm primary disabled:text-gray-300 disabled:bg-gray-500">
-          Save
-        </button>
-        <button
-          class="ml-1 btn-sm danger"
-          @click="editing = false; window.history.replaceState(null, '', window.location.pathname)">
-          Cancel
-        </button>
-      </form>
-    </template>
+      <p class="font-semibold text-center text-gray-700">
+        This comment may have been deleted or the id is incorrect.
+      </p>
+    </div>
+  {% elif comment %}
+    <div class="space-y-2" x-data="{ editing: {{ is_editing }} }">
+      {{ read_all_btn(post) }}
 
-    <template x-if="!editing">
-      <div class="px-2 py-3">
-        <p class="text-xs text-gray-500 mb-2">
-          Posted by
-          {% if is_current_user_member %}
-            <a class="hover:underline" href="/u/{{ comment.author }}">u/{{ comment.author }}</a>
-          {% else %}
-            <span>&block;&block;&block;&block;&block;</span>
-          {% endif %}
-          • {{ comment.date_created | formatdistance }}
-        </p>
-        <div class="prose prose-sm max-w-none">
-          {{ comment.body | escape | makehtml(3) | safe }}
+      <template x-if="editing">
+        <form class="space-y-2" action="/c/{{ comment.id }}/edit" method="post">
+          <textarea
+            class="w-full px-4 py-2 text-sm rounded-md border border-solid border-neutral-300"
+            rows="3"
+            name="comment"
+            maxlength="200"
+            required
+            placeholder="What are your thoughts?">{{ comment.body }}</textarea>
+          <button type="submit" class="btn-sm primary disabled:text-gray-300 disabled:bg-gray-500">
+            Save
+          </button>
+          <button
+            class="ml-1 btn-sm danger"
+            @click="editing = false; window.history.replaceState(null, '', window.location.pathname)">
+            Cancel
+          </button>
+        </form>
+      </template>
+
+      <template x-if="!editing">
+        <div class="px-2 py-3">
+          <p class="text-xs text-gray-500 mb-2">
+            Posted by
+            {% if is_current_user_member %}
+              <a class="hover:underline" href="/u/{{ comment.author }}">u/{{ comment.author }}</a>
+            {% else %}
+              <span>&block;&block;&block;&block;&block;</span>
+            {% endif %}
+            • {{ comment.date_created | formatdistance }}
+          </p>
+          <div class="prose prose-sm max-w-none">
+            {{ comment.body | escape | makehtml(3) | safe }}
+          </div>
         </div>
-      </div>
-    </template>
-  </div>
+      </template>
+    </div>
+  {% else %}
+    {% if current_user and not is_current_user_member %}
+      <p class="font-semibold text-center text-gray-700">
+        <a class="hover:underline" href="/b/{{ post.board }}/join">Become a member</a>
+        of this board to join the conversation
+      </p>
+    {% else %}
+      <p class="font-semibold text-center text-gray-700">
+        <a class="hover:underline" href="/login">Log in</a>
+        to join the conversation
+      </p>
+    {% endif %}
+  {% endif %}
 {% endblock %}
+
+{% macro read_all_btn(data) %}
+  <a href="{{ data.url }}" class="group inline-flex align-middle font-semibold">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-arrow-left"
+      width="26"
+      height="26"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="#2c3e50"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <line x1="5" y1="12" x2="19" y2="12"/>
+      <line x1="5" y1="12" x2="11" y2="18"/>
+      <line x1="5" y1="12" x2="11" y2="6"/>
+    </svg>
+    <span class="text-neutral-800 group-hover:underline">
+      Read all comments
+    </span>
+  </a>
+{% endmacro %}

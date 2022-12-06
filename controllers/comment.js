@@ -11,27 +11,40 @@ const {
 } = require('./utils');
 
 module.exports = {
-  // TODO: Do not proceed if post is private
   index: [
     extractFlashMessages('success'),
     extractFlashMessages('error'),
-    populate('postid commentid', {
-      commentid: (query) => query.orFail(new NotFoundError()),
-    }),
-    (req, res) => {
+    populate('postid'),
+    async (req, res) => {
+      const isMember = req.user?.isMember(req.data.post.board);
       const willEdit = 'edit' in req.query;
 
       res.locals.post = req.data.post.toSafeObject();
-      res.locals.comment = req.data.comment.toObject({ virtuals: true });
-      res.locals.is_current_user_member = req.user?.isMember(
-        req.data.post.board
-      );
+      res.locals.is_current_user_member = isMember;
 
-      res.locals.is_editing = willEdit;
+      // only fetch comment data if public post or user is member
+      if (!req.data.post.private || isMember) {
+        try {
+          const comment = await Comment.findById(req.params.commentid).orFail(
+            new NotFoundError('Comment not found')
+          );
+          res.locals.comment = comment.toObject({ virtuals: true });
 
-      if (willEdit && req.user.username !== req.data.comment.author) {
-        res.locals.is_editing = false;
-        res.locals.messages = createMessages('error', null, 'Invalid action');
+          res.locals.is_editing = willEdit;
+
+          if (willEdit && req.user.username !== req.data.comment.author) {
+            res.locals.is_editing = false;
+            res.locals.messages = createMessages(
+              'error',
+              null,
+              'Invalid action'
+            );
+          }
+        } catch (err) {
+          if (err instanceof NotFoundError) {
+            res.locals.not_found = true;
+          }
+        }
       }
 
       res.render('pages/post/comment');
