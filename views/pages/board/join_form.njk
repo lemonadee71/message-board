@@ -3,7 +3,7 @@
 
 {% set title = "Join board" %}
 
-{% block body %}
+{% block form %}
   {% call form('Join /b/' + boardname, '/b/' + boardname + '/join') %}
   {{ input('password', 'passcode', required=true) }}
   {% endcall %}
