@@ -1,9 +1,55 @@
 {% macro post_card(data) %}
-  <div class="relative group bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500" data-href="{{ data.url }}" @click="window.location.assign($el.dataset.href)">
+  <div class="relative group bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500">
     {{ caller() }}
     <div class="prose prose-sm line-clamp-6 max-w-none">
       <h1>{{ data.title }}</h1>
       {{ data.body | makehtml | safe }}
+    </div>
+    {# TODO: Darken on hover both text and icon at the same time #}
+    <div class="flex space-x-3 mt-3 p-1">
+      <button class="flex items-center p-1 text-gray-500" @click.stop="window.location.assign('{{ data.url }}')">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="mr-2 stroke-gray-500 hover:stroke-gray-700"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="#ffffff"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10"/>
+          <path d="M14 15v2a1 1 0 0 1 -1 1h-7l-3 3v-10a1 1 0 0 1 1 -1h2"/>
+        </svg>
+        <span class="hover:text-gray-700">
+          Comment
+        </span>
+      </button>
+      <button class="flex items-center p-1 text-gray-500" @click.stop="$clipboard(window.location.origin + '{{ data.url }}')">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="mr-2 stroke-gray-500 hover:stroke-gray-700"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="#ffffff"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <circle cx="6" cy="12" r="3"/>
+          <circle cx="18" cy="6" r="3"/>
+          <circle cx="18" cy="18" r="3"/>
+          <line x1="8.7" y1="10.7" x2="15.3" y2="7.3"/>
+          <line x1="8.7" y1="13.3" x2="15.3" y2="16.7"/>
+        </svg>
+        <span class="hover:text-gray-700">
+          Share
+        </span>
+      </button>
     </div>
   </div>
 {% endmacro %}
