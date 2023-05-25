@@ -34,6 +34,7 @@ Try it [here](https://privvit.onrender.com/)
 - Tailwind CSS
 - Passport
 - Parcel
+- Jest
 
 ## Motivation
 This is a project for The Odin Project. I initially just wanted to practice using Express and Mongoose but I thought I could also practice authentication so I did just that. This was supposed to be a simple message board project but ended up a Reddit clone.
