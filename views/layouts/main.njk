@@ -4,13 +4,19 @@
 {% from "components/buttons.njk" import get_btn, post_btn %}
 
 {% block body %}
-  <header class="flex flex-row justify-between content-center px-8 pt-6 pb-4 shadow-sm border border-solid border-b-gray-200">
+  <header class="flex flex-row justify-between items-center px-8 pt-6 pb-4 shadow-sm border border-solid border-b-gray-200">
     <h1 class="font-bold text-xl align-middle">
       <a href="/">Privvit</a>
     </h1>
     <div class="space-x-3">
       {% if current_user %}
-        {{ post_btn('Logout', '/logout') }}
+        <div class="flex flex-row space-x-4 items-center">
+          <p class="text-lg h-fit align-middle">
+            Hello,
+            <a class="font-bold" href="/profile">{{ current_user.display_name }}</a>
+          </p>
+          {{ post_btn('Logout', '/logout') }}
+        </div>
       {% else %}
         {{ get_btn('Sign Up', '/signup', class="btn border border-solid primary-r") }}
         {{ get_btn('Login', '/login') }}
