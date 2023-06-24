@@ -32,7 +32,11 @@ module.exports = async () => {
       boards: ['playground', 'top', 'private'],
     },
     { username: 'lemon', password: '1234', boards: ['top'] },
-    { username: 'user', password: '1234', boards: ['playground'] },
+    {
+      username: 'user',
+      password: '1234',
+      boards: ['playground', 'top', 'private'],
+    },
   ]);
 
   await Board.create([
