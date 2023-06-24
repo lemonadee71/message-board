@@ -1,5 +1,7 @@
 {% macro post_card(data) %}
-  <div class="relative group bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500">
+  <div
+    class="relative group bg-white rounded-md px-6 py-4 cursor-pointer border border-solid hover:border-gray-500"
+    @click.stop="window.location.assign('{{ data.url }}')">
     {{ caller() }}
     <div class="prose prose-sm line-clamp-6 max-w-none">
       <h1>{{ data.title }}</h1>
