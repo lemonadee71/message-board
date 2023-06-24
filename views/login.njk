@@ -4,8 +4,19 @@
 {% set title = "Login" %}
 
 {% block form %}
-  {% call form(title, '/login') %}
-  {{ input('text', 'username', required=true, show_required=false) }}
-  {{ input('password', 'password', required=true, show_required=false) }}
-  {% endcall %}
+  <div class="mx-auto max-w-md">
+
+    {% call form(title, '/login') %}
+    {{ input('text', 'username', required=true, show_required=false) }}
+    {{ input('password', 'password', required=true, show_required=false) }}
+    {% endcall %} <br/>
+
+    <form action="/login" method="post">
+      <input type="hidden" name="username" value="user"/>
+      <input type="hidden" name="password" value="1234"/>
+      <span class="text-lg mr-4">or</span>
+      <button type="submit" class="btn primary">Log in as Guest</button>
+    </form>
+
+  </div>
 {% endblock %}
