@@ -33,7 +33,8 @@ exports.connectDB = async function () {
 
   db.once('open', () => {
     console.log(`MongoDB successfully connected to ${uri}`);
-    if (process.env.NODE_ENV !== 'production') {
+    // Be careful using SEED=true because we only execute it exactly once
+    if (process.env.NODE_ENV !== 'production' || process.env.SEED) {
       console.log('Populating db...');
       require('./scripts/populateDB')();
     }

@@ -8,8 +8,10 @@
     "test:watch": "jest --watch",
     "tailwind:build": "npx parcel build tailwind.css --target build --no-source-maps",
     "tailwind:watch": "nodemon --exec 'npm run tailwind:build' -e njk",
-    "watch": "NODE_ENV=development nodemon ./bin/www",
+    "seed": "node -e 'require('./scripts/populateDB')()'",
+    "watch": "NODE_ENV=development nodemon ./bin/www && npm run seed",
     "start": "NODE_ENV=production node ./bin/www",
+    "init": "NODE_ENV=production SEED=true node ./bin/www",
     "start:dev": "concurrently --kill-others -c green,cyan -n server,tailwind \"npm run watch\" \"npm run tailwind:watch\""
   },
   "dependencies": {
